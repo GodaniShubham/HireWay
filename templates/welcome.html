@@ -1,0 +1,204 @@
+<!-- HireWay_app/templates/welcome.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HireWay - Welcome</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Poppins Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom styles with aesthetic animations and improved UI -->
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #0a0a0a;
+            color: #f0f0f0;
+            overflow-x: hidden;
+            line-height: 1.6;
+            position: relative;
+        }
+        /* Background Particle Animation */
+        @keyframes move {
+            0% { transform: translate(0, 0); opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { transform: translate(100px, 100px); opacity: 0.5; }
+        }
+        .particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            animation: move linear infinite;
+        }
+        .particle:nth-child(1) { left: 10%; top: 20%; animation-duration: 15s; }
+        .particle:nth-child(2) { left: 30%; top: 50%; animation-duration: 20s; }
+        .particle:nth-child(3) { left: 70%; top: 30%; animation-duration: 12s; }
+        .particle:nth-child(4) { left: 90%; top: 70%; animation-duration: 18s; }
+        .particle:nth-child(5) { left: 50%; top: 10%; animation-duration: 14s; }
+
+        .navbar {
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(240, 240, 240, 0.1);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        .navbar a {
+            color: #f0f0f0;
+            font-weight: 500;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+        .navbar a:hover {
+            color: #a0a0a0;
+            transform: translateY(-2px);
+        }
+        .hero {
+            padding: 10rem 0 6rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            animation: fadeIn 1.5s ease-out;
+        }
+        .hero h1 {
+            font-size: 4.5rem;
+            font-weight: 300;
+            letter-spacing: -0.05em;
+            color: #ffffff;
+            text-shadow: 0 0 25px rgba(255, 255, 255, 0.15);
+            animation: slideUp 1s ease-out;
+        }
+        .hero p {
+            font-size: 1.3rem;
+            font-weight: 300;
+            color: #b0b0b0;
+            max-width: 850px;
+            margin: 1.5rem auto;
+            animation: fadeInUp 1.2s ease-out 0.3s backwards;
+        }
+        .content-section {
+            max-width: 1100px;
+            margin: 5rem auto;
+            padding: 3.5rem;
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            border: 1px solid rgba(240, 240, 240, 0.12);
+            animation: slideInUp 1s ease-out;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        .feature-button {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            color: #f0f0f0;
+            padding: 1.2rem 2.5rem;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.4s ease;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .feature-button:hover {
+            background: linear-gradient(135deg, #2a2a2a, #3a3a3a);
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        .feature-button i {
+            margin-right: 0.5rem;
+        }
+        .footer {
+            background: #0a0a0a;
+            padding: 2.5rem;
+            text-align: center;
+            border-top: 1px solid rgba(240, 240, 240, 0.1);
+            animation: slideInUp 1.2s ease-out 0.4s backwards;
+        }
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        h2 {
+            font-size: 2.8rem;
+            font-weight: 300;
+            color: #ffffff;
+            letter-spacing: -0.03em;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+        a { color: #a0a0a0; transition: color 0.3s ease; }
+        a:hover { color: #d0d0d0; }
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 3rem; }
+            .hero p { font-size: 1.1rem; }
+            .content-section { padding: 2rem; margin: 3rem auto; }
+            .feature-button { padding: 1rem 2rem; font-size: 0.95rem; }
+        }
+    </style>
+</head>
+<body class="min-h-screen relative">
+    <!-- Background Particles -->
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar p-4 sticky top-0 z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="/" class="text-2xl font-bold text-white flex items-center">
+                HireWay <span class="ml-2 text-sm text-gray-400 animate-pulse">v1.0</span>
+            </a>
+            <div class="space-x-8">
+                <a href="{% url '' %}" class="hover:underline transition-transform">Login</a>
+                <a href="" class="hover:underline transition-transform">Sign Up</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero animate-fadeIn">
+        <h1>Welcome to HireWay</h1>
+        <p>Unlock your dream career with our innovative job application portal. Seamlessly filter, apply, and track your journey with cutting-edge tools.</p>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content-section">
+        <h2 class="text-center mb-10">Core Features</h2>
+        <p class="text-center text-gray-400 mb-14">HireWay empowers your career with a suite of tools including job applications, resume building, practice exams, leaderboard rankings, application history, and personalized profiles.</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <a href="/jobs/" class="feature-button"><i class="fas fa-briefcase"></i> Jobs</a>
+            <a href="/resume-builder/" class="feature-button"><i class="fas fa-file-alt"></i> Resume Builder</a>
+            <a href="/practice-exam/" class="feature-button"><i class="fas fa-book"></i> Practice & Exam</a>
+            <a href="/leaderboard/" class="feature-button"><i class="fas fa-trophy"></i> Leaderboard</a>
+            <a href="/history/" class="feature-button"><i class="fas fa-history"></i> History</a>
+            <a href="/profile/" class="feature-button"><i class="fas fa-user"></i> Profile</a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer mt-16">
+        <p class="text-gray-400 text-sm">© 2025 HireWay. All rights reserved. | <a href="#" class="hover:underline">Privacy Policy</a> | <a href="#" class="hover:underline">Terms of Service</a></p>
+    </div>
+</body>
+</html>

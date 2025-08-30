@@ -1,172 +1,13 @@
-<!-- jobs/templates/job_applications.html -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HireWay - Job Applications</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Poppins Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Custom styles for professional and enhanced design -->
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #1a2a6c 0%, #2a5298 100%);
-            color: #e0e7ff;
-            overflow-x: hidden;
-            line-height: 1.6;
-        }
-        .navbar {
-            background: rgba(26, 42, 108, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(224, 231, 255, 0.1);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        .navbar a {
-            color: #e0e7ff;
-            font-weight: 500;
-            transition: color 0.3s ease, transform 0.3s ease;
-        }
-        .navbar a:hover {
-            color: #93c5fd;
-            transform: translateY(-2px);
-        }
-        .hero {
-            background: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"%3E%3Cpath fill="%231a2a6c" fill-opacity="0.5" d="M0,64L48,80C96,96,192,128,288,128C384,128,480,96,576,85.3C672,75,768,85,864,106.7C960,128,1056,160,1152,176C1248,192,1344,192,1392,192L1440,192L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"%3E%3C/path%3E%3C/svg%3E'),
-                    linear-gradient(135deg, #1a2a6c 0%, #2a5298 100%);
-            background-size: cover, cover;
-            padding: 4rem 0;
-            text-align: center;
-            border-bottom: 1px solid rgba(224, 231, 255, 0.1);
-            animation: fadeIn 1s ease-out;
-        }
-        .hero h1 {
-            font-size: 3rem;
-            font-weight: 700;
-            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
-            color: #ffffff;
-        }
-        .filter-section {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(8px);
-            border-radius: 12px;
-            padding: 2.5rem;
-            border: 1px solid rgba(224, 231, 255, 0.15);
-            animation: slideInUp 0.6s ease-out;
-        }
-        .custom-select {
-            appearance: none;
-            background: rgba(255, 255, 255, 0.12);
-            border: 1px solid rgba(224, 231, 255, 0.25);
-            border-radius: 8px;
-            padding: 0.75rem 2rem 0.75rem 1rem;
-            color: #e0e7ff;
-            width: 100%;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20' stroke='%23e0e7ff' class='w-5 h-5 absolute right-2 top-1/2 transform -translate-y-1/2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 0.5rem center;
-        }
-        .custom-select:focus {
-            outline: none;
-            border-color: #93c5fd;
-            box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.4);
-        }
-        .custom-select option {
-            background: #2a5298;
-            color: #e0e7ff;
-            padding: 0.5rem;
-        }
-        .job-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(8px);
-            border-radius: 12px;
-            padding: 1.5rem;
-            border: 1px solid rgba(224, 231, 255, 0.15);
-            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-            transform-origin: center;
-        }
-        .job-card:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.05) translateY(-8px);
-            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
-        }
-        .apply-btn, .details-btn {
-            transition: all 0.3s ease;
-            border-radius: 20px;
-        }
-        .apply-btn:hover {
-            background-color: #34d399;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(52, 211, 153, 0.3);
-        }
-        .details-btn:hover {
-            background-color: #9ca3af;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(156, 163, 175, 0.3);
-        }
-        .status-shortlisted { color: #f59e0b; font-weight: 500; }
-        .status-interview { color: #06b6d4; font-weight: 500; }
-        .status-offer { color: #34d399; font-weight: 500; }
-        .footer {
-            background: #1a2a6c;
-            padding: 2rem;
-            text-align: center;
-            border-top: 1px solid rgba(224, 231, 255, 0.1);
-            animation: slideInUp 0.8s ease-out 0.2s backwards;
-        }
-        /* Professional Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        @keyframes slideInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.03); }
-        }
-        .animate-pulse { animation: pulse 2.5s infinite; }
-        .animate-fadeIn { animation: fadeIn 1s ease-out; }
-        .animate-slideInUp { animation: slideInUp 0.6s ease-out; }
-        h1 { font-size: 2.8rem; font-weight: 700; text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4); }
-        h2 { font-size: 2.2rem; font-weight: 600; text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3); }
-        .table-header { background: linear-gradient(90deg, #1a2a6c, #2a5298); }
-    </style>
-</head>
-<body class="min-h-screen">
-    <!-- Navigation Bar -->
-    <nav class="navbar p-4 sticky top-0 z-50">
-        <div class="container mx-auto flex justify-between items-center">
-            <a href="#" class="text-2xl font-bold text-white animate-pulse">HireWay</a>
-            <div class="space-x-8">
-                <a href="#" class="hover:underline transition-transform">Dashboard</a>
-                <a href="#" class="hover:underline font-semibold transition-transform">Jobs</a>
-                <a href="#" class="hover:underline transition-transform">Practice & Exam</a>
-                <a href="#" class="hover:underline transition-transform">Resume Builder</a>
-                <a href="#" class="hover:underline transition-transform">Leader-board</a>
-                <a href="#" class="hover:underline transition-transform">History</a>
-                <a href="#" class="hover:underline transition-transform">Profile</a>
-            </div>
-            <div class="text-white font-medium">
-                {% if request.user.is_authenticated %}{{ request.user.username }}{% else %}Guest{% endif %}
-            </div>
-        </div>
-    </nav>
+<!-- HireWay_app/templates/job_applications.html -->
+{% extends 'base.html' %}
 
-    <!-- Hero Section -->
-    <div class="hero animate-slideInUp">
-        <h1 class="mb-4">Welcome to HireWay</h1>
-        <p class="text-lg text-gray-300 max-w-2xl mx-auto">Discover your dream career with our cutting-edge job application portal. Filter, apply, and track your journey seamlessly.</p>
-    </div>
+{% block title %}HireWay - Job Applications{% endblock %}
 
+{% block content %}
     <!-- Main Content -->
     <div class="container mx-auto mt-12 px-4">
+        <h1 class="text-center mb-8 text-white">HireWay Job Applications</h1>
+
         <!-- Filter Section -->
         <div class="filter-section mb-12">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -249,13 +90,9 @@
             </table>
         </div>
     </div>
+{% endblock %}
 
-    <!-- Footer -->
-    <div class="footer mt-16">
-        <p class="text-gray-300 text-sm">© 2025 HireWay. All rights reserved. | <a href="#" class="text-blue-300 hover:underline">Privacy Policy</a> | <a href="#" class="text-blue-300 hover:underline">Terms of Service</a></p>
-    </div>
-
-    <!-- Custom JS for Interactivity -->
+{% block scripts %}
     <script>
         function filterJobs() {
             const domain = document.getElementById('domainSelect').value.toLowerCase();
@@ -292,5 +129,4 @@
             alert(`Viewing details for ${company} on HireWay.`);
         }
     </script>
-</body>
-</html>
+{% endblock %}

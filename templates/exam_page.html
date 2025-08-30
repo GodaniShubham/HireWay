@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} | Placement Tracker{% endblock %}
+
+{% block content %}
+<div class="glass glow rounded-2xl p-8 max-w-3xl mx-auto animate-fadeInUp">
+  <h2 class="text-3xl font-bold text-indigo-400 mb-4">{{ title }}</h2>
+  <p class="text-gray-300 mb-6">⏱️ Time Limit: <span class="text-red-400 font-semibold">{{ time_limit }} mins</span></p>
+
+  <form method="post">
+    {% csrf_token %}
+    {% for q in questions %}
+    <div class="mb-6">
+      <p class="font-medium text-lg text-yellow-300 mb-2">{{ forloop.counter }}. {{ q.question }}</p>
+      <div class="space-y-2">
+        {% for opt in q.options %}
+        <label class="block bg-gray-800/50 px-4 py-2 rounded-lg hover:bg-gray-700 cursor-pointer">
+          <input type="radio" name="q{{ q.id }}" value="{{ opt }}" class="mr-2">
+          <span class="text-gray-200">{{ opt }}</span>
+        </label>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+    <button type="submit" class="w-full py-3 bg-gradient-to-r from-green-500 to-green-700 text-white font-semibold rounded-lg hover:scale-105 transition">
+      Submit Test 🚀
+    </button>
+  </form>
+</div>
+
+<style>
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fadeInUp { animation: fadeInUp 0.8s ease-out; }
+</style>
+{% endblock %}

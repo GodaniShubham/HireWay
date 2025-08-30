@@ -1,6 +1,14 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
+from HireWay_app.models import Job, Application,Notification,Student  # apne models import kar
 
+# 🔹 Welcome Page
+def welcome(request):
+    return render(request, 'welcome.html')
+
+
+# 🔹 Student Dashboard
 def student_dashboard(request):
+    # TODO: yahan baad me Student model se data laa sakte hain
     context = {
         'applied_jobs_count': 5,
         'upcoming_exams_count': 2,
@@ -13,25 +21,40 @@ def student_dashboard(request):
     return render(request, 'student_dashboard.html', context)
 
 
+# 🔹 Company Dashboard (DB se data)
 def company_dashboard(request):
+    company_name = request.user.username if request.user.is_authenticated else "Unknown Company"
+
+    jobs_posted = Job.objects.filter(company=company_name).count()
+    applicants = Application.objects.filter(job__company=company_name).count()
+    interviews = Application.objects.filter(job__company=company_name, status="interview_scheduled").count()
+    offers = Application.objects.filter(job__company=company_name, status="offer_received").count()
+    success_rate = int((offers / applicants) * 100) if applicants > 0 else 0
+
     stats = {
-        "jobs_posted": 12,
-        "applicants": 85,
-        "interviews": 14,
-        "success_rate": 72,
+        "jobs_posted": jobs_posted,
+        "applicants": applicants,
+        "interviews": interviews,
+        "success_rate": success_rate,
     }
 
-    latest_applicants = [
-        {"name": "Alice Johnson", "status": "Shortlisted"},
-        {"name": "Rajveer Chavda", "status": "Interview"},
-        {"name": "Sarah Lee", "status": "Pending"},
-    ]
+    latest_applicants = (
+        Application.objects.filter(job__company=company_name)
+        .select_related("user", "job")
+        .order_by("-id")[:5]
+    )
 
-    return render(request, "company.html", {
+    context = {
         "stats": stats,
-        "latest_applicants": latest_applicants
-    })
+        "latest_applicants": [
+            {"name": app.user.username, "status": app.status, "job": app.job.title}
+            for app in latest_applicants
+        ]
+    }
+    return render(request, "company.html", context)
 
+
+# 🔹 TPO Dashboard (abhi dummy, baad me DB connect hoga)
 def tpo_dashboard(request):
     stats = {
         "total_companies": 25,
@@ -52,15 +75,10 @@ def tpo_dashboard(request):
     })
 
 
-
-
+# 🔹 Job Applications (dummy for now)
 def job_applications(request):
-    # Dummy data for now
-    jobs = [
-        {"title": "Software Engineer", "company": "Google"},
-        {"title": "Data Analyst", "company": "Amazon"},
-    ]
-    applications = []
+    jobs = Job.objects.all()
+    applications = Application.objects.filter(user=request.user) if request.user.is_authenticated else []
 
     context = {
         'jobs': jobs,
@@ -68,10 +86,67 @@ def job_applications(request):
     }
     return render(request, 'job_applications.html', context)
 
+
+# 🔹 Company Tests (dummy)
 def company_tests(request):
     tests = [
-        {"company": "TechCorp", "role": "Software Engineer", "date": "Oct 5, 10:00 AM", "duration": 60, "status": "Scheduled"},
-        {"company": "FinTechX", "role": "Data Analyst", "date": "Sept 28, 2:00 PM", "duration": 45, "status": "Pending"},
-        {"company": "Innovatech", "role": "UI/UX Designer", "date": "Oct 10, 11:00 AM", "duration": 30, "status": "Completed"},
+        {"id": 1, "company": "TechCorp", "role": "Software Engineer", "date": "Oct 5, 10:00 AM", "duration": 60, "status": "Scheduled"},
+        {"id": 2, "company": "FinTechX", "role": "Data Analyst", "date": "Sept 28, 2:00 PM", "duration": 45, "status": "Pending"},
+        {"id": 3, "company": "Innovatech", "role": "UI/UX Designer", "date": "Oct 10, 11:00 AM", "duration": 30, "status": "Completed"},
     ]
-    return render(request, "company_tests.html", {"tests": tests})
+    return render(request, "company_test.html", {"tests": tests})
+
+
+# 🔹 Start Test (dummy MCQ test)
+def start_test(request, test_id):
+    all_tests = {
+        1: {
+            "title": "TechCorp - Software Engineer Test",
+            "time_limit": 60,
+            "questions": [
+                {"id": 1, "question": "What is the output of 2 + '2' in JavaScript?", "options": ["4", "22", "NaN", "Error"]},
+                {"id": 2, "question": "Python is ___ typed language?", "options": ["Strongly", "Weakly", "Dynamically", "Statically"]},
+                {"id": 3, "question": "Which company developed React?", "options": ["Google", "Microsoft", "Facebook", "Amazon"]},
+            ],
+        },
+        2: {
+            "title": "FinTechX - Data Analyst Test",
+            "time_limit": 45,
+            "questions": [
+                {"id": 1, "question": "Which SQL clause is used to filter records?", "options": ["ORDER BY", "WHERE", "GROUP BY", "JOIN"]},
+                {"id": 2, "question": "What is the output of 5 // 2 in Python?", "options": ["2.5", "3", "2", "Error"]},
+            ],
+        },
+        3: {
+            "title": "Innovatech - UI/UX Designer Test",
+            "time_limit": 30,
+            "questions": [
+                {"id": 1, "question": "Which tool is widely used for prototyping UI?", "options": ["Photoshop", "Figma", "Excel", "Word"]},
+                {"id": 2, "question": "Which color model is used in digital design?", "options": ["CMYK", "RGB", "HSB", "XYZ"]},
+            ],
+        }
+    }
+
+    test = all_tests.get(test_id)
+    if not test:
+        return render(request, "exam_page.html", {"error": "Test not found!"})
+
+    return render(request, "exam_page.html", {
+        "test_id": test_id,
+        "title": test["title"],
+        "questions": test["questions"],
+        "total_questions": len(test["questions"]),
+        "time_limit": test["time_limit"],
+    })
+def notifications(request):
+    if not request.user.is_authenticated:
+        return render(request, "notifications.html", {"error": "Please log in first"})
+    
+    try:
+        student = Student.objects.get(user=request.user)
+    except Student.DoesNotExist:
+        student = None
+
+    all_notifications = Notification.objects.filter(student=student).order_by('-date') if student else []
+
+    return render(request, "notifications.html", {"notifications": all_notifications})

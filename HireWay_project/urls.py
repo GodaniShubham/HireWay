@@ -21,7 +21,7 @@ from django.views.generic import RedirectView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('HireWay_app.urls')),  
+    path('', include('HireWay_app.urls') ),  
     path("accounts/", include("accounts.urls")),
     # path("", RedirectView.as_view(url="/accounts/login/")), 
 ]

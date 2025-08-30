@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,6 +42,33 @@ INSTALLED_APPS = [
     'HireWay_app',
     'accounts',
 ]
+
+JAZZMIN_SETTINGS = {
+    "site_title": "HireWay Admin",
+    "site_header": "HireWay Placement Tracker",
+    "site_brand": "HireWay",
+    "welcome_sign": "Welcome to HireWay Dashboard",
+    "copyright": "HireWay © 2025",
+
+    # Icons
+    "icons": {
+        "auth.User": "fas fa-user",
+        "auth.Group": "fas fa-users",
+        "HireWay_app.Student": "fas fa-user-graduate",
+        "HireWay_app.Job": "fas fa-briefcase",
+        "HireWay_app.Application": "fas fa-file-signature",
+    },
+
+    # Top Menu
+    "topmenu_links": [
+        {"name": "Dashboard", "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"app": "HireWay_app"},
+    ],
+
+    # UI tweaks
+    "show_ui_builder": True,   # live customize option milega
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

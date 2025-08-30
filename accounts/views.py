@@ -61,35 +61,28 @@ def register_view(request):
 
     return render(request, "accounts/register.html")
 
-# ------------------ LOGIN ------------------
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .models import UserAccount
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
+from .models import UserProfile
 
 def login_view(request):
     if request.method == "POST":
-        role = request.POST.get("role")
         email = request.POST.get("email")
         password = request.POST.get("password")
 
         try:
-            user = UserAccount.objects.get(email=email, role=role)
-            if user.check_password(password):
-                # store session
-                request.session["user_id"] = user.id
-                request.session["role"] = user.role
+            # Find user by email inside the Django User table
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return render(request, "accounts/login.html", {"error": "Invalid email"})
 
-                # redirect based on role
-                if user.role == "student":
-                    return redirect("student_dashboard")
-                elif user.role == "company":
-                    return redirect("company_dashboard")
-                elif user.role == "tpo":
-                    return redirect("tpo_dashboard")
-            else:
-                messages.error(request, "Invalid password")
-        except UserAccount.DoesNotExist:
-            messages.error(request, "User not found for this role")
+        # Authenticate using username
+        user = authenticate(request, username=user.username, password=password)
+        if user:
+            login(request, user)
+            return redirect("student_dashboard")
+        else:
+            return render(request, "accounts/login.html", {"error": "Invalid password"})
 
     return render(request, "accounts/login.html")
 
