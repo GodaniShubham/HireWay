@@ -1,169 +1,248 @@
-<!-- jobs/templates/jobs/job_applications.html -->
+<!-- jobs/templates/job_applications.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Placement Tracker Portal - Job Applications</title>
-    <!-- Tailwind CSS for a unique, modern, and professional design -->
+    <title>HireWay - Job Applications</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Custom styles for impressiveness -->
+    <!-- Poppins Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom styles for professional and enhanced design -->
     <style>
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f9fafb;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a2a6c 0%, #2a5298 100%);
+            color: #e0e7ff;
+            overflow-x: hidden;
+            line-height: 1.6;
         }
         .navbar {
-            background-color: #1e40af;
+            background: rgba(26, 42, 108, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(224, 231, 255, 0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .navbar a {
+            color: #e0e7ff;
+            font-weight: 500;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+        .navbar a:hover {
+            color: #93c5fd;
+            transform: translateY(-2px);
+        }
+        .hero {
+            background: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"%3E%3Cpath fill="%231a2a6c" fill-opacity="0.5" d="M0,64L48,80C96,96,192,128,288,128C384,128,480,96,576,85.3C672,75,768,85,864,106.7C960,128,1056,160,1152,176C1248,192,1344,192,1392,192L1440,192L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"%3E%3C/path%3E%3C/svg%3E'),
+                    linear-gradient(135deg, #1a2a6c 0%, #2a5298 100%);
+            background-size: cover, cover;
+            padding: 4rem 0;
+            text-align: center;
+            border-bottom: 1px solid rgba(224, 231, 255, 0.1);
+            animation: fadeIn 1s ease-out;
+        }
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
+            color: #ffffff;
         }
         .filter-section {
-            background-color: white;
-            padding: 1.5rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(8px);
+            border-radius: 12px;
+            padding: 2.5rem;
+            border: 1px solid rgba(224, 231, 255, 0.15);
+            animation: slideInUp 0.6s ease-out;
+        }
+        .custom-select {
+            appearance: none;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(224, 231, 255, 0.25);
+            border-radius: 8px;
+            padding: 0.75rem 2rem 0.75rem 1rem;
+            color: #e0e7ff;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20' stroke='%23e0e7ff' class='w-5 h-5 absolute right-2 top-1/2 transform -translate-y-1/2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+        }
+        .custom-select:focus {
+            outline: none;
+            border-color: #93c5fd;
+            box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.4);
+        }
+        .custom-select option {
+            background: #2a5298;
+            color: #e0e7ff;
+            padding: 0.5rem;
         }
         .job-card {
-            background-color: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 0.5rem;
-            padding: 1rem;
-            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid rgba(224, 231, 255, 0.15);
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transform-origin: center;
         }
         .job-card:hover {
-            transform: scale(1.02);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05) translateY(-8px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
         }
-        .apply-btn {
-            background-color: #10b981;
-            color: white;
+        .apply-btn, .details-btn {
+            transition: all 0.3s ease;
+            border-radius: 20px;
         }
-        .details-btn {
-            background-color: #6b7280;
-            color: white;
+        .apply-btn:hover {
+            background-color: #34d399;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 211, 153, 0.3);
         }
-        .status-shortlisted {
-            color: #eab308;
-            font-weight: 600;
+        .details-btn:hover {
+            background-color: #9ca3af;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(156, 163, 175, 0.3);
         }
-        .status-interview {
-            color: #06b6d4;
-            font-weight: 600;
-        }
-        .status-offer {
-            color: #10b981;
-            font-weight: 600;
-        }
+        .status-shortlisted { color: #f59e0b; font-weight: 500; }
+        .status-interview { color: #06b6d4; font-weight: 500; }
+        .status-offer { color: #34d399; font-weight: 500; }
         .footer {
-            background-color: #1e40af;
-            color: white;
-            padding: 1rem;
+            background: #1a2a6c;
+            padding: 2rem;
             text-align: center;
-            margin-top: 2rem;
+            border-top: 1px solid rgba(224, 231, 255, 0.1);
+            animation: slideInUp 0.8s ease-out 0.2s backwards;
         }
-        /* Add subtle animations */
+        /* Professional Animations */
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
         }
-        .animate-fadeIn {
-            animation: fadeIn 0.5s ease-in-out;
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+        .animate-pulse { animation: pulse 2.5s infinite; }
+        .animate-fadeIn { animation: fadeIn 1s ease-out; }
+        .animate-slideInUp { animation: slideInUp 0.6s ease-out; }
+        h1 { font-size: 2.8rem; font-weight: 700; text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4); }
+        h2 { font-size: 2.2rem; font-weight: 600; text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3); }
+        .table-header { background: linear-gradient(90deg, #1a2a6c, #2a5298); }
     </style>
 </head>
-<body>
+<body class="min-h-screen">
     <!-- Navigation Bar -->
-    <nav class="navbar text-white p-4">
+    <nav class="navbar p-4 sticky top-0 z-50">
         <div class="container mx-auto flex justify-between items-center">
-            <a href="#" class="text-xl font-bold">Placement Tracker Portal</a>
-            <div class="space-x-4">
-                <a href="#" class="hover:underline">Dashboard</a>
-                <a href="#" class="hover:underline font-semibold">Jobs</a>
-                <a href="#" class="hover:underline">Practice & Exam</a>
-                <a href="#" class="hover:underline">Resume Builder</a>
-                <a href="#" class="hover:underline">Leader-board</a>
-                <a href="#" class="hover:underline">History</a>
-                <a href="#" class="hover:underline">Profile</a>
+            <a href="#" class="text-2xl font-bold text-white animate-pulse">HireWay</a>
+            <div class="space-x-8">
+                <a href="#" class="hover:underline transition-transform">Dashboard</a>
+                <a href="#" class="hover:underline font-semibold transition-transform">Jobs</a>
+                <a href="#" class="hover:underline transition-transform">Practice & Exam</a>
+                <a href="#" class="hover:underline transition-transform">Resume Builder</a>
+                <a href="#" class="hover:underline transition-transform">Leader-board</a>
+                <a href="#" class="hover:underline transition-transform">History</a>
+                <a href="#" class="hover:underline transition-transform">Profile</a>
             </div>
-            <div>{% if request.user.is_authenticated %}{{ request.user.username }}{% else %}Guest{% endif %}</div>
+            <div class="text-white font-medium">
+                {% if request.user.is_authenticated %}{{ request.user.username }}{% else %}Guest{% endif %}
+            </div>
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <div class="container mx-auto mt-8 px-4">
-        <h1 class="text-3xl font-bold text-center mb-6 animate-fadeIn">Job Applications</h1>
+    <!-- Hero Section -->
+    <div class="hero animate-slideInUp">
+        <h1 class="mb-4">Welcome to HireWay</h1>
+        <p class="text-lg text-gray-300 max-w-2xl mx-auto">Discover your dream career with our cutting-edge job application portal. Filter, apply, and track your journey seamlessly.</p>
+    </div>
 
-        <!-- Filter Section (no forms, just select elements) -->
-        <div class="filter-section mb-8 animate-fadeIn">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <!-- Main Content -->
+    <div class="container mx-auto mt-12 px-4">
+        <!-- Filter Section -->
+        <div class="filter-section mb-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <div>
-                    <label for="domainSelect" class="block text-sm font-medium text-gray-700">Domain</label>
-                    <select id="domainSelect" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                        <option value="">All</option>
+                    <label for="domainSelect" class="block text-sm font-medium text-gray-300">Domain</label>
+                    <select id="domainSelect" class="custom-select mt-2">
+                        <option value="">All Domains</option>
                         <option value="software">Software</option>
                         <option value="marketing">Marketing</option>
                     </select>
                 </div>
                 <div>
-                    <label for="packageSelect" class="block text-sm font-medium text-gray-700">Package</label>
-                    <select id="packageSelect" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                        <option value="">All</option>
+                    <label for="packageSelect" class="block text-sm font-medium text-gray-300">Package</label>
+                    <select id="packageSelect" class="custom-select mt-2">
+                        <option value="">All Packages</option>
                         <option value="3-5">3-5 LPA</option>
                         <option value="5-8">5-8 LPA</option>
                         <option value="8+">8+ LPA</option>
                     </select>
                 </div>
                 <div>
-                    <label for="locationSelect" class="block text-sm font-medium text-gray-700">Location</label>
-                    <select id="locationSelect" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                        <option value="">All</option>
+                    <label for="locationSelect" class="block text-sm font-medium text-gray-300">Location</label>
+                    <select id="locationSelect" class="custom-select mt-2">
+                        <option value="">All Locations</option>
                         <option value="bangalore">Bangalore</option>
                         <option value="punjab">Punjab</option>
                         <option value="gujarat">Gujarat</option>
                     </select>
                 </div>
                 <div>
-                    <label for="searchInput" class="block text-sm font-medium text-gray-700">Search</label>
-                    <input type="text" id="searchInput" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" placeholder="Search jobs...">
+                    <label for="searchInput" class="block text-sm font-medium text-gray-300">Search Jobs</label>
+                    <input type="text" id="searchInput" class="mt-2 block w-full bg-transparent border-gray-500 rounded-lg p-2 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-400" placeholder="Search jobs...">
                 </div>
             </div>
         </div>
 
         <!-- Job Listings -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8" id="jobListings">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16" id="jobListings">
             {% for job in jobs %}
-                <div class="job-item job-card animate-fadeIn" data-domain="{{ job.domain|lower }}" data-package="{{ job.package|lower|slice:':3' }}" data-location="{{ job.location|lower }}">
-                    <h5 class="text-lg font-semibold">{{ job.title }} - {{ job.company }}</h5>
-                    <p class="text-gray-600">{{ job.location }} | {{ job.package }}</p>
-                    <p class="text-gray-600">Eligibility: {{ job.eligibility }}</p>
-                    <button class="apply-btn px-4 py-2 rounded-md text-sm" onclick="applyJob('{{ job.company }}')">Apply</button>
-                    <button class="details-btn px-4 py-2 rounded-md text-sm ml-2" onclick="viewDetails('{{ job.company }}')">View Details</button>
+                <div class="job-card animate-slideInUp" data-domain="{{ job.domain|lower }}" data-package="{{ job.package|lower|slice:':3' }}" data-location="{{ job.location|lower }}">
+                    <h5 class="text-xl font-semibold text-white">{{ job.title }} - {{ job.company }}</h5>
+                    <p class="text-gray-300 mt-2">{{ job.location }} | {{ job.package }}</p>
+                    <p class="text-gray-400 mt-1">Eligibility: {{ job.eligibility }}</p>
+                    <div class="mt-4 flex space-x-4">
+                        <button class="apply-btn px-6 py-2 rounded-full text-sm" onclick="applyJob('{{ job.company }}')">Apply Now</button>
+                        <button class="details-btn px-6 py-2 rounded-full text-sm" onclick="viewDetails('{{ job.company }}')">View Details</button>
+                    </div>
                 </div>
             {% empty %}
-                <p class="text-center col-span-3">No jobs available.</p>
+                <p class="text-center col-span-3 text-gray-300 text-lg">No jobs available at the moment.</p>
             {% endfor %}
         </div>
 
         <!-- My Applications Section -->
-        <h2 class="text-2xl font-bold mb-4 animate-fadeIn">My Applications</h2>
+        <h2 class="text-center mb-8">My Applications</h2>
         <div class="overflow-x-auto">
-            <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
-                <thead class="bg-indigo-600 text-white">
+            <table class="min-w-full bg-white bg-opacity-10 rounded-xl shadow-lg">
+                <thead class="table-header">
                     <tr>
-                        <th class="px-6 py-3 text-left">Company</th>
-                        <th class="px-6 py-3 text-left">Role</th>
-                        <th class="px-6 py-3 text-left">Status</th>
+                        <th class="px-6 py-3 text-left text-gray-200 font-semibold">Company</th>
+                        <th class="px-6 py-3 text-left text-gray-200 font-semibold">Role</th>
+                        <th class="px-6 py-3 text-left text-gray-200 font-semibold">Status</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for app in applications %}
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4">{{ app.job.company }}</td>
-                            <td class="px-6 py-4">{{ app.job.title }}</td>
-                            <td class="px-6 py-4 {% if app.status == 'shortlisted' %}status-shortlisted{% elif app.status == 'interview_scheduled' %}status-interview{% elif app.status == 'offer_received' %}status-offer{% endif %}">{{ app.get_status_display }}</td>
+                        <tr class="hover:bg-white hover:bg-opacity-20 transition-colors duration-300">
+                            <td class="px-6 py-4 text-white">{{ app.job.company }}</td>
+                            <td class="px-6 py-4 text-white">{{ app.job.title }}</td>
+                            <td class="px-6 py-4 {% if app.status == 'shortlisted' %}status-shortlisted{% elif app.status == 'interview_scheduled' %}status-interview{% elif app.status == 'offer_received' %}status-offer{% endif %}">
+                                {{ app.get_status_display }}
+                            </td>
                         </tr>
                     {% empty %}
                         <tr>
-                            <td colspan="3" class="px-6 py-4 text-center">No applications yet.</td>
+                            <td colspan="3" class="px-6 py-4 text-center text-gray-400 text-lg">No applications yet.</td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -172,8 +251,8 @@
     </div>
 
     <!-- Footer -->
-    <div class="footer">
-        Placement Tracker Portal
+    <div class="footer mt-16">
+        <p class="text-gray-300 text-sm">© 2025 HireWay. All rights reserved. | <a href="#" class="text-blue-300 hover:underline">Privacy Policy</a> | <a href="#" class="text-blue-300 hover:underline">Terms of Service</a></p>
     </div>
 
     <!-- Custom JS for Interactivity -->
@@ -184,7 +263,7 @@
             const location = document.getElementById('locationSelect').value.toLowerCase();
             const search = document.getElementById('searchInput').value.toLowerCase();
 
-            const jobs = document.querySelectorAll('.job-item');
+            const jobs = document.querySelectorAll('.job-card');
             jobs.forEach(job => {
                 const jobDomain = job.dataset.domain;
                 const jobPackage = job.dataset.package;
@@ -206,13 +285,11 @@
         document.getElementById('searchInput').addEventListener('input', filterJobs);
 
         function applyJob(company) {
-            alert(`Applied to ${company}!`);
-            // AJAX call to server for real application (currently just a placeholder)
+            alert(`Applied to ${company} on HireWay!`);
         }
 
         function viewDetails(company) {
-            alert(`Viewing details for ${company}.`);
-            // Could redirect or open modal
+            alert(`Viewing details for ${company} on HireWay.`);
         }
     </script>
 </body>
