@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'HireWay_app',
     'accounts',
+    'widget_tweaks',
 ]
 
 JAZZMIN_SETTINGS = {

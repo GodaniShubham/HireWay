@@ -67,12 +67,8 @@ from django.contrib import messages
 from .models import UserProfile
 
 from django.contrib.auth import authenticate, login
-from django.contrib import messages
-from .models import UserProfile
 
-from django.contrib.auth import authenticate, login
-from django.contrib import messages
-@csrf_exempt
+# @csrf_exempt
 def login_view(request):
     if request.method == "POST":
         role = request.POST.get("role")

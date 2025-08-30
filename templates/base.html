@@ -47,6 +47,31 @@
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
+    .btn-primary {
+    background-color: #3b82f6;
+    transition: background-color 0.3s;
+}
+.btn-primary:hover {
+    background-color: #2563eb;
+}
+.btn-secondary, .btn-ghost {
+    background-color: #4b5563;
+    transition: background-color 0.3s;
+}
+.btn-secondary:hover, .btn-ghost:hover {
+    background-color: #374151;
+}
+.btn-template {
+    flex: 1;
+}
+input, textarea {
+    border: 1px solid #4b5563;
+    transition: border-color 0.3s;
+}
+input:focus, textarea:focus {
+    border-color: #3b82f6;
+    outline: none;
+}
   </style>
 </head>
 <body class="text-white font-sans">
@@ -57,8 +82,8 @@
       <h1 class="text-2xl font-bold tracking-wide">HireWay</h1>
       <ul class="hidden md:flex space-x-8 text-lg">
         <li><a href="{% url 'student_dashboard' %}" class="nav-link hover:text-yellow-300 transition">Dashboard</a></li>
-        <li><a href="{% url 'available-exam' %}" class="nav-link hover:text-yellow-300 transition">Jobs</a></li>
-        <li><a href="{% url 'available-exam' %}" class="nav-link hover:text-yellow-300 transition">Practice & Exams</a></li>
+        <li><a href="{% url 'job_list' %}" class="nav-link hover:text-yellow-300 transition">Jobs</a></li>
+        <li><a href="{% url 'practice_exam' %}" class="nav-link hover:text-yellow-300 transition">Practice & Exams</a></li>
         <li><a href="{% url 'resume_list' %}" class="nav-link hover:text-yellow-300 transition">Resume Builder</a></li>
         <li><a href="{% url 'student_dashboard' %}" class="nav-link hover:text-yellow-300 transition">Leaderboard</a></li>
         <li><a href="{% url 'student_dashboard' %}" class="nav-link hover:text-yellow-300 transition">History</a></li>

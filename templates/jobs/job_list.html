@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container">
+        <h1 class="page-title">Job Listings</h1>
+
+        <!-- Search Form -->
+        <div class="search-form">
+            <form method="GET" class="form-group">
+                <div class="form-row">
+                    <label for="domain" class="form-label">Domain</label>
+                    <select name="domain" id="domain" class="form-select">
+                        <option value="">All</option>
+                        <option value="Software">Software</option>
+                        <option value="Marketing">Marketing</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <label for="package" class="form-label">Package</label>
+                    <select name="package" id="package" class="form-select">
+                        <option value="">All</option>
+                        <option value="3-5 LPA">3-5 LPA</option>
+                        <option value="5-8 LPA">5-8 LPA</option>
+                        <option value="8+ LPA">8+ LPA</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <label for="location" class="form-label">Location</label>
+                    <select name="location" id="location" class="form-select">
+                        <option value="">All</option>
+                        <option value="Bangalore">Bangalore</option>
+                        <option value="Pune">Pune</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-search">Search</button>
+            </form>
+        </div>
+
+        <!-- Job Listings -->
+        <div class="job-listings">
+            {% for job in jobs %}
+                <div class="job-item">
+                    <h2 class="job-title">{{ job.description }} - <span class="company-name">{{ job.company.name }}</span></h2>
+                    <p class="job-details">
+                        <strong>Package:</strong> {{ job.salary }} | 
+                        <strong>Location:</strong> {{ job.location }} | 
+                        <strong>Domain:</strong> {{ job.domain }}
+                    </p>
+                    <a href="{% url 'job_detail' job.id %}" class="btn-details">View Details</a>
+                </div>
+            {% empty %}
+                <p>No jobs found. Please refine your search.</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_css %}
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .page-title {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .search-form {
+            margin-bottom: 30px;
+            background-color: #f4f4f4;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-row {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 1em;
+        }
+
+        .btn-search {
+            background-color: #007BFF;
+            color: white;
+            padding: 12px 20px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .btn-search:hover {
+            background-color: #0056b3;
+        }
+
+        .job-listings {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .job-item {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .job-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .job-title {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .company-name {
+            color: #007BFF;
+        }
+
+        .job-details {
+            font-size: 1em;
+            color: #555;
+        }
+
+        .btn-details {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 15px;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        .btn-details:hover {
+            background-color: #218838;
+        }
+    </style>
+{% endblock %}

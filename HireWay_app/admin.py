@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Student, Notification, Job, Application, Company
+from .models import Student, Notification, Job, JobApplication, Company
 
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
@@ -13,7 +13,7 @@ class NotificationAdmin(admin.ModelAdmin):
 class JobAdmin(admin.ModelAdmin):
     list_display = ("title", "company", "location", "package", "domain")
 
-@admin.register(Application)
+@admin.register(JobApplication)
 class ApplicationAdmin(admin.ModelAdmin):
     list_display = ("user", "job", "status")
 
@@ -32,3 +32,10 @@ class ResumeAdmin(admin.ModelAdmin):
     list_display = ('title','full_name','user','template','updated_at')
     list_filter = ('template','updated_at')
     search_fields = ('full_name','email','user__username')
+
+from django.contrib import admin
+from .models import Job
+
+@admin.register(Job)
+class JobAdmin(admin.ModelAdmin):
+    list_display = ['title', 'company', 'location', 'salary', 'deadline']

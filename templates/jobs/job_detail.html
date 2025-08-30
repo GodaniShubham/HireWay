@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>{{ job.title }} @ {{ job.company }}</h1>
+    <p><strong>Eligibility:</strong> {{ job.eligibility }}</p>
+    <p><strong>Skills:</strong> {{ job.skills }}</p>
+    <p><strong>Package:</strong> {{ job.package }}</p>
+    <p><strong>Location:</strong> {{ job.location }}</p>
+    <p><strong>Deadline:</strong> {{ job.deadline }}</p>
+    
+    <a href="{% url 'apply_job' job.id %}">Apply for Job</a>
+{% endblock %}

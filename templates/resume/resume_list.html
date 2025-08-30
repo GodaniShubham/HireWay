@@ -2,29 +2,31 @@
 {% block content %}
 <div class="max-w-4xl mx-auto p-6">
     <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-semibold">Your Resumes</h2>
-        <a class="btn-primary" href="{% url 'resume_create' %}">Create Resume</a>
+        <h2 class="text-3xl font-bold text-white">Your Resumes</h2>
+        <a href="{% url 'resume_create' %}" class="btn-primary bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition duration-300">Create Resume</a>
     </div>
 
     {% if resumes %}
     <div class="space-y-4">
         {% for r in resumes %}
-        <div class="p-4 bg-slate-800 rounded flex justify-between items-center">
+        <div class="p-6 bg-gray-800 rounded-lg shadow-lg flex justify-between items-center hover:bg-gray-700 transition duration-300">
             <div>
-                <div class="font-semibold">{{ r.title }}</div>
-                <div class="text-sm text-slate-400">{{ r.full_name }} • {{ r.template }}</div>
-                <div class="text-xs text-slate-500">Updated {{ r.updated_at|date:"SHORT_DATETIME_FORMAT" }}</div>
+                <div class="font-semibold text-white">{{ r.title }}</div>
+                <div class="text-sm text-gray-400">{{ r.full_name }} • {{ r.template }}</div>
+                <div class="text-xs text-gray-500">Updated {{ r.updated_at|date:"SHORT_DATETIME_FORMAT" }}</div>
             </div>
             <div class="flex gap-2">
-                <a class="btn-ghost" href="{% url 'resume_detail' r.pk %}">View</a>
-                <a class="btn-secondary" href="{% url 'resume_edit' r.pk %}">Edit</a>
-                <a class="btn-primary" href="{% url 'resume_pdf' r.pk %}">Download PDF</a>
+                <a href="{% url 'resume_detail' r.pk %}" class="btn-ghost bg-gray-600 hover:bg-gray-500 text-white py-1 px-3 rounded-lg transition duration-300">View</a>
+                <a href="{% url 'resume_edit' r.pk %}" class="btn-secondary bg-gray-600 hover:bg-gray-500 text-white py-1 px-3 rounded-lg transition duration-300">Edit</a>
+                <a href="{% url 'resume_pdf' r.pk %}" class="btn-primary bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded-lg transition duration-300">Download PDF</a>
             </div>
         </div>
         {% endfor %}
     </div>
     {% else %}
-    <p>No resumes yet. <a href="{% url 'resume_create' %}">Create your first resume</a>.</p>
+    <div class="p-6 bg-gray-800 rounded-lg shadow-lg text-center">
+        <p class="text-gray-400">No resumes yet. <a href="{% url 'resume_create' %}" class="text-blue-400 hover:underline">Create your first resume</a>.</p>
+    </div>
     {% endif %}
 </div>
 {% endblock %}

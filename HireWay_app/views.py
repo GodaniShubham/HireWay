@@ -5,17 +5,16 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from xhtml2pdf import pisa
 from io import BytesIO
+from django.contrib import messages
 
-from .models import Job, Application, Notification, Student, Test, Resume
-from .forms import ResumeForm
-
+from .models import Job, JobApplication, Notification, Student, Test, Resume
+from .forms import ResumeForm, JobApplicationForm
 
 # --------------------------------------------
 # 🔹 Public / General Views
 # --------------------------------------------
 def welcome(request):
     return render(request, "welcome.html")
-
 
 # --------------------------------------------
 # 🔹 Student Dashboard
@@ -35,18 +34,17 @@ def student_dashboard(request):
     }
     return render(request, "student_dashboard.html", context)
 
-
 # --------------------------------------------
 # 🔹 Company Dashboard
 # --------------------------------------------
 @login_required
 def company_dashboard(request):
-    company_name = request.user.username if request.user.is_authenticated else "Unknown"
+    company = get_object_or_404(Company, user=request.user)
 
-    jobs_posted = Job.objects.filter(company=company_name).count()
-    applicants = Application.objects.filter(job__company=company_name).count()
-    interviews = Application.objects.filter(job__company=company_name, status="interview_scheduled").count()
-    offers = Application.objects.filter(job__company=company_name, status="offer_received").count()
+    jobs_posted = Job.objects.filter(company=company).count()
+    applicants = JobApplication.objects.filter(job__company=company).count()
+    interviews = JobApplication.objects.filter(job__company=company, status="Interview Scheduled").count()
+    offers = JobApplication.objects.filter(job__company=company, status="Offer Received").count()
 
     stats = {
         "jobs_posted": jobs_posted,
@@ -56,7 +54,7 @@ def company_dashboard(request):
     }
 
     latest_applicants = (
-        Application.objects.filter(job__company=company_name)
+        JobApplication.objects.filter(job__company=company)
         .select_related("user", "job")
         .order_by("-id")[:5]
     )
@@ -70,14 +68,13 @@ def company_dashboard(request):
     }
     return render(request, "company_dashboard.html", context)
 
-
 # --------------------------------------------
 # 🔹 TPO Dashboard
 # --------------------------------------------
 @login_required
 def tpo_dashboard(request):
     stats = {
-        "total_companies": 25,
+        "total_companies": Company.objects.count(),
         "students_registered": Student.objects.count(),
         "placements_done": Student.objects.filter(placement_status="Placed").count(),
         "ongoing_drives": Job.objects.count(),
@@ -87,7 +84,6 @@ def tpo_dashboard(request):
 
     return render(request, "tpo_dashboard.html", {"stats": stats, "latest_drives": latest_drives})
 
-
 # --------------------------------------------
 # 🔹 Tests & Exams
 # --------------------------------------------
@@ -95,7 +91,6 @@ def tpo_dashboard(request):
 def company_tests(request):
     tests = Test.objects.filter(category="company").order_by("-id")
     return render(request, "company_test.html", {"tests": tests})
-
 
 @login_required
 def practice_exam(request):
@@ -106,11 +101,9 @@ def practice_exam(request):
         "company_tests": company_tests
     })
 
-
 @login_required
 def start_test(request, test_id):
     test = get_object_or_404(Test, id=test_id)
-    # Dummy questions (later replace with real model)
     base_questions = [
         {"question": "What is the output of 2 + '2' in JavaScript?", "options": ["4", "22", "NaN", "Error"]},
         {"question": "Python is ___ typed language?", "options": ["Strongly", "Weakly", "Dynamically", "Statically"]},
@@ -130,10 +123,8 @@ def start_test(request, test_id):
         "total_questions": len(questions),
     })
 
-
 @login_required
 def mocktest_result(request):
-    # Dummy result
     result_data = {
         "score": 77.5,
         "correct": 21,
@@ -147,7 +138,6 @@ def mocktest_result(request):
     }
     return render(request, "mockresult.html", {"result": result_data})
 
-
 # --------------------------------------------
 # 🔹 Resume Builder
 # --------------------------------------------
@@ -156,8 +146,8 @@ def resume_list(request):
     resumes = Resume.objects.filter(user=request.user)
     return render(request, "resume/resume_list.html", {"resumes": resumes})
 
-
 @login_required
+
 def resume_create(request):
     if request.method == "POST":
         form = ResumeForm(request.POST)
@@ -165,6 +155,7 @@ def resume_create(request):
             resume = form.save(commit=False)
             resume.user = request.user
             resume.save()
+            messages.success(request, "Resume saved successfully!")
             return redirect("resume_detail", pk=resume.pk)
     else:
         form = ResumeForm(initial={
@@ -172,8 +163,6 @@ def resume_create(request):
             "email": getattr(request.user, "email", ""),
         })
     return render(request, "resume/resume_form.html", {"form": form})
-
-
 @login_required
 def resume_edit(request, pk):
     resume = get_object_or_404(Resume, pk=pk, user=request.user)
@@ -186,12 +175,10 @@ def resume_edit(request, pk):
         form = ResumeForm(instance=resume)
     return render(request, "resume/resume_form.html", {"form": form, "resume": resume})
 
-
 @login_required
 def resume_detail(request, pk):
     resume = get_object_or_404(Resume, pk=pk, user=request.user)
     return render(request, "resume/resume_detail.html", {"resume": resume})
-
 
 @login_required
 def resume_pdf(request, pk):
@@ -206,6 +193,7 @@ def resume_pdf(request, pk):
     response = HttpResponse(result.getvalue(), content_type="application/pdf")
     response["Content-Disposition"] = f'attachment; filename="{resume.full_name.replace(" ", "_")}_resume.pdf"'
     return response
+
 @login_required
 def notifications(request):
     student = None
@@ -219,3 +207,54 @@ def notifications(request):
 
     return render(request, "notifications.html", {"notifications": notifications})
 
+# --------------------------------------------
+# 🔹 Jobs
+# --------------------------------------------
+@login_required
+def job_list(request):
+    jobs = Job.objects.all()
+
+    domain = request.GET.get('domain')
+    package = request.GET.get('package')
+    location = request.GET.get('location')
+
+    if domain:
+        jobs = jobs.filter(domain__iexact=domain)
+    if package:
+        jobs = jobs.filter(package__iexact=package)
+    if location:
+        jobs = jobs.filter(location__iexact=location)
+
+    context = {
+        'jobs': jobs,
+    }
+    return render(request, "jobs/job_list.html", context)
+
+@login_required
+def job_detail(request, job_id):
+    job = get_object_or_404(Job, id=job_id)
+    context = {
+        'job': job
+    }
+    return render(request, "jobs/job_detail.html", context)
+
+@login_required
+def apply_job(request, job_id):
+    job = get_object_or_404(Job, id=job_id)
+    
+    if request.method == 'POST':
+        form = JobApplicationForm(request.POST, request.FILES)
+        if form.is_valid():
+            application = form.save(commit=False)
+            application.job = job
+            application.user = request.user
+            application.save()
+            return redirect('job_detail', job_id=job.id)
+    else:
+        form = JobApplicationForm()
+    
+    context = {
+        'form': form,
+        'job': job
+    }
+    return render(request, "jobs/apply_job.html", context)

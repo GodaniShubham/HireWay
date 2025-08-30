@@ -42,52 +42,6 @@ class Notification(models.Model):
 
 
 # -------------------------------------------------------------------
-# 🔹 Job Model
-# -------------------------------------------------------------------
-class Job(models.Model):
-    title = models.CharField(max_length=100)
-    company = models.CharField(max_length=100)
-    location = models.CharField(max_length=50)
-    package = models.CharField(max_length=20, help_text="e.g., '6-8 LPA'")
-    eligibility = models.CharField(max_length=100)
-    domain = models.CharField(max_length=50)
-    description = models.TextField(blank=True, null=True)
-
-    class Meta:
-        verbose_name = "Job"
-        verbose_name_plural = "Jobs"
-
-    def __str__(self):
-        return f"{self.title} at {self.company}"
-
-
-# -------------------------------------------------------------------
-# 🔹 Job Application
-# -------------------------------------------------------------------
-class Application(models.Model):
-    STATUS_CHOICES = [
-        ('applied', 'Applied'),
-        ('shortlisted', 'Shortlisted'),
-        ('interview_scheduled', 'Interview Scheduled'),
-        ('offer_received', 'Offer Received'),
-    ]
-
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="applications")
-    job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name="applications")
-    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default="applied")
-    applied_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ('user', 'job')
-        ordering = ['-applied_at']
-        verbose_name = "Application"
-        verbose_name_plural = "Applications"
-
-    def __str__(self):
-        return f"{self.user.username} - {self.job.title} ({self.status})"
-
-
-# -------------------------------------------------------------------
 # 🔹 Company Profile
 # -------------------------------------------------------------------
 class Company(models.Model):
@@ -105,20 +59,20 @@ class Company(models.Model):
     # 🔹 Dynamic properties
     @property
     def total_jobs(self):
-        return Job.objects.filter(company=self.name).count()
+        return Job.objects.filter(company=self).count()
 
     @property
     def applicants_received(self):
-        return Application.objects.filter(job__company=self.name).count()
+        return JobApplication.objects.filter(job__company=self).count()
 
     @property
     def interviews_scheduled(self):
-        return Application.objects.filter(job__company=self.name, status="interview_scheduled").count()
+        return JobApplication.objects.filter(job__company=self, status="Interview Scheduled").count()
 
     @property
     def success_rate(self):
         applicants = self.applicants_received
-        offers = Application.objects.filter(job__company=self.name, status="offer_received").count()
+        offers = JobApplication.objects.filter(job__company=self, status="Offer Received").count()
         return round((offers / applicants) * 100, 2) if applicants > 0 else 0.0
 
 
@@ -194,3 +148,59 @@ class Resume(models.Model):
 
     def __str__(self):
         return f"{self.title} ({self.user.username})"
+
+
+# -------------------------------------------------------------------
+# 🔹 Job
+# -------------------------------------------------------------------
+class Job(models.Model):
+    ('title', models.CharField(max_length=255, default='')), # Ensure this exists
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    description = models.TextField()
+    location = models.CharField(max_length=255)
+    salary = models.DecimalField(max_digits=10, decimal_places=2)
+    domain = models.CharField(max_length=100, blank=True)
+    package = models.CharField(max_length=50, blank=True)
+    deadline = models.DateField()
+
+    def __str__(self):
+        return f"{self.title} at {self.company.name}"  # This references job.title
+
+
+
+
+
+# -------------------------------------------------------------------
+# 🔹 Job Application
+# -------------------------------------------------------------------
+class JobApplication(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    job = models.ForeignKey(Job, on_delete=models.CASCADE)
+
+    full_name = models.CharField(max_length=255)
+    enrollment_number = models.CharField(max_length=50)
+    branch = models.CharField(max_length=100)
+    passing_year = models.IntegerField()
+    email = models.EmailField()
+    phone = models.CharField(max_length=15)
+    resume = models.FileField(upload_to='resumes/')
+    cover_letter = models.TextField()
+
+    STATUS_CHOICES = [
+        ('Shortlisted', 'Shortlisted'),
+        ('Interview Scheduled', 'Interview Scheduled'),
+        ('Offer Received', 'Offer Received'),
+    ]
+
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Shortlisted')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    status_updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Job Application"
+        verbose_name_plural = "Job Applications"
+
+    def __str__(self):
+        return f"{self.full_name} - {self.job.title}"
+
