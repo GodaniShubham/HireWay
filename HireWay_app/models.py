@@ -154,7 +154,7 @@ class Resume(models.Model):
 # 🔹 Job
 # -------------------------------------------------------------------
 class Job(models.Model):
-    ('title', models.CharField(max_length=255, default='')), # Ensure this exists
+    title = models.CharField(max_length=255)  # Ensure the title field exists
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     description = models.TextField()
     location = models.CharField(max_length=255)
@@ -164,8 +164,7 @@ class Job(models.Model):
     deadline = models.DateField()
 
     def __str__(self):
-        return f"{self.title} at {self.company.name}"  # This references job.title
-
+        return f"{self.title} at {self.company.name}"  # Returning title here
 
 
 

@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>{% block title %}Placement Tracker{% endblock %}</title>
+  <title>{% block title %}HireWay{% endblock %}</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
@@ -48,30 +48,30 @@
       to { opacity: 1; transform: translateY(0); }
     }
     .btn-primary {
-    background-color: #3b82f6;
-    transition: background-color 0.3s;
-}
-.btn-primary:hover {
-    background-color: #2563eb;
-}
-.btn-secondary, .btn-ghost {
-    background-color: #4b5563;
-    transition: background-color 0.3s;
-}
-.btn-secondary:hover, .btn-ghost:hover {
-    background-color: #374151;
-}
-.btn-template {
-    flex: 1;
-}
-input, textarea {
-    border: 1px solid #4b5563;
-    transition: border-color 0.3s;
-}
-input:focus, textarea:focus {
-    border-color: #3b82f6;
-    outline: none;
-}
+      background-color: #3b82f6;
+      transition: background-color 0.3s;
+    }
+    .btn-primary:hover {
+      background-color: #2563eb;
+    }
+    .btn-secondary, .btn-ghost {
+      background-color: #4b5563;
+      transition: background-color 0.3s;
+    }
+    .btn-secondary:hover, .btn-ghost:hover {
+      background-color: #374151;
+    }
+    .btn-template {
+      flex: 1;
+    }
+    input, textarea {
+      border: 1px solid #4b5563;
+      transition: border-color 0.3s;
+    }
+    input:focus, textarea:focus {
+      border-color: #3b82f6;
+      outline: none;
+    }
   </style>
 </head>
 <body class="text-white font-sans">
@@ -98,6 +98,15 @@ input:focus, textarea:focus {
 
   <!-- Page Content -->
   <section class="container mx-auto mt-12 px-6 fade-in">
+    <!-- Display Messages -->
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-success bg-green-600 text-white p-4 rounded-lg mb-4" role="alert">
+      {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+
     {% block content %}
     {% endblock %}
   </section>
@@ -128,7 +137,7 @@ input:focus, textarea:focus {
       </div>
     </div>
     <div class="text-center mt-6 text-sm text-gray-400">
-      © 2025 Placement Tracker | Built with ❤️ for Hackathon
+      © 2025 HireWay. All rights reserved.
     </div>
   </footer>
 

@@ -210,10 +210,13 @@ def notifications(request):
 # --------------------------------------------
 # 🔹 Jobs
 # --------------------------------------------
+
 @login_required
 def job_list(request):
+    # Fetching jobs based on filters
     jobs = Job.objects.all()
 
+    print('=================================================================================================================================================================================================================================================>' , jobs)
     domain = request.GET.get('domain')
     package = request.GET.get('package')
     location = request.GET.get('location')
@@ -224,11 +227,11 @@ def job_list(request):
         jobs = jobs.filter(package__iexact=package)
     if location:
         jobs = jobs.filter(location__iexact=location)
-
     context = {
         'jobs': jobs,
     }
-    return render(request, "jobs/job_list.html", context)
+    return render(request, "jobs/job_list.html", {'jobs': jobs,})
+
 
 @login_required
 def job_detail(request, job_id):
