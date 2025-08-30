@@ -15,26 +15,34 @@ def student_dashboard(request):
     }
     return render(request, 'student_dashboard.html', context)
 
+def company_dashboard(request):
+    # Dummy data (you can replace with DB queries later)
+    stats = {
+        "jobs_posted": 12,
+        "applicants": 85,
+        "interviews": 14,
+        "success_rate": 72,   # percentage
+    }
 
-def job_list(request):
-    jobs = Job.objects.all()
-    applications = []
+    latest_applicants = [
+        {"name": "Alice Johnson", "status": "Shortlisted"},
+        {"name": "Rajveer Chavda", "status": "Interview"},
+        {"name": "Sarah Lee", "status": "Pending"},
+    ]
 
-    if request.user.is_authenticated:
-        applications = Application.objects.filter(user=request.user)
-
-    return render(request, "job_applications.html", {
-        "jobs": jobs,
-        "applications": applications
+    return render(request, "company_dashboard.html", {
+        "stats": stats,
+        "latest_applicants": latest_applicants
     })
 
 
-def apply_job(request, job_id):
-    job = get_object_or_404(Job, id=job_id)
-
-    if request.user.is_authenticated:
-        Application.objects.create(user=request.user, job=job, status="Applied")
-    else:
-        print("Anonymous user tried to apply.")
-
-    return redirect("job_applications")
+def job_applications(request):
+    jobs = Job.objects.all()
+    # Show applications only for authenticated users, empty list for guests
+    applications = Application.objects.filter(user=request.user) if request.user.is_authenticated else []
+    
+    context = {
+        'jobs': jobs,
+        'applications': applications,
+    }
+    return render(request, 'job_applications.html', context)

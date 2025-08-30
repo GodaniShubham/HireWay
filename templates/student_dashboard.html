@@ -8,13 +8,13 @@
 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
   
   <!-- Applied Jobs -->
-  <div class="glass glow rounded-2xl p-8 transition duration-500 hover:scale-105">
+  <div class="glass glow rounded-2xl p-8 transform transition duration-700 hover:scale-105 hover:-rotate-1 animate-fadeInUp">
     <div class="flex items-center justify-between mb-4">
       <h3 class="text-xl font-medium">Applied Jobs</h3>
-      <span class="bg-green-500/20 text-green-300 text-xs px-3 py-1 rounded-full">Active</span>
+      <span class="bg-green-500/20 text-green-300 text-xs px-3 py-1 rounded-full animate-pulse">Active</span>
     </div>
     <div class="flex items-center justify-center">
-      <img src="https://cdn-icons-png.flaticon.com/512/3135/3135673.png" class="w-10 h-10 mr-3">
+      <i class="fas fa-briefcase text-white text-5xl mr-3 animate-bounce"></i>
       <p class="text-6xl font-extrabold text-green-400 drop-shadow-lg counter" data-target="{{ stats.applied_jobs }}">0</p>
     </div>
     <p class="mt-3 text-gray-300 text-sm">Total companies applied till now</p>
@@ -22,20 +22,20 @@
     <!-- progress -->
     <div class="mt-6">
       <p class="text-xs text-gray-400 mb-1">Goal: 10 Applications</p>
-      <div class="w-full bg-gray-700 rounded-full h-3">
-        <div class="bg-gradient-to-r from-green-400 to-emerald-600 h-3 rounded-full" style="width: {{ stats.applied_jobs|floatformat:0 }}0%;"></div>
+      <div class="w-full bg-gray-700 rounded-full h-3 overflow-hidden">
+        <div class="bg-gradient-to-r from-green-400 to-emerald-600 h-3 rounded-full progress-bar" style="width: 0%;"></div>
       </div>
     </div>
   </div>
 
   <!-- Upcoming Exams -->
-  <div class="glass glow rounded-2xl p-8 transition duration-500 hover:scale-105">
+  <div class="glass glow rounded-2xl p-8 transform transition duration-700 hover:scale-105 hover:rotate-1 animate-fadeInUp delay-200">
     <div class="flex items-center justify-between mb-4">
       <h3 class="text-xl font-medium">Upcoming Exams</h3>
       <span class="bg-orange-500/20 text-orange-300 text-xs px-3 py-1 rounded-full">Next 7 days</span>
     </div>
     <div class="flex items-center justify-center">
-      <img src="https://cdn-icons-png.flaticon.com/512/2910/2910768.png" class="w-10 h-10 mr-3">
+      <i class="fas fa-pencil-alt text-white text-5xl mr-3 animate-spin-slow"></i>
       <p class="text-6xl font-extrabold text-orange-400 drop-shadow-lg counter" data-target="{{ stats.upcoming_exams }}">0</p>
     </div>
     <p class="mt-3 text-gray-300 text-sm">Don’t miss your upcoming tests 🚀</p>
@@ -48,13 +48,13 @@
   </div>
 
   <!-- Placement Status -->
-  <div class="glass glow rounded-2xl p-8 transition duration-500 hover:scale-105">
+  <div class="glass glow rounded-2xl p-8 transform transition duration-700 hover:scale-105 hover:-rotate-1 animate-fadeInUp delay-400">
     <div class="flex items-center justify-between mb-4">
       <h3 class="text-xl font-medium">Placement Status</h3>
       <span class="bg-indigo-500/20 text-indigo-300 text-xs px-3 py-1 rounded-full">In Progress</span>
     </div>
     <div class="flex items-center justify-center">
-      <img src="https://cdn-icons-png.flaticon.com/512/190/190411.png" class="w-10 h-10 mr-3">
+      <i class="fas fa-user-tie text-white text-4xl mr-3 animate-pulse"></i>
       <p class="text-3xl font-bold {% if stats.placement_status == 'Placed' %}text-green-400{% else %}text-red-400{% endif %}">
         {{ stats.placement_status }}
       </p>
@@ -72,18 +72,21 @@
         <span class="text-gray-400">Offer</span>
         <span class="text-gray-400">Joined</span>
       </div>
-      <div class="w-full bg-gray-700 rounded-full h-2 mt-2">
-        <div class="bg-gradient-to-r from-green-400 via-yellow-400 to-indigo-500 h-2 rounded-full" style="width: 65%;"></div>
+      <div class="w-full bg-gray-700 rounded-full h-2 mt-2 overflow-hidden">
+        <div class="bg-gradient-to-r from-green-400 via-yellow-400 to-indigo-500 h-2 rounded-full progress-bar" style="width: 0%;"></div>
       </div>
     </div>
   </div>
 
 </div>
 
-<!-- Counter Animation Script -->
+<!-- Counter & Progress Animation Script -->
 <script>
   document.addEventListener("DOMContentLoaded", () => {
     const counters = document.querySelectorAll(".counter");
+    const progressBars = document.querySelectorAll(".progress-bar");
+
+    // Counter animation
     counters.forEach(counter => {
       counter.innerText = "0";
       const updateCounter = () => {
@@ -99,6 +102,36 @@
       };
       updateCounter();
     });
+
+    // Progress bar animation
+    progressBars.forEach(bar => {
+      const targetWidth = bar.getAttribute("style").match(/width:\s*(\d+)%/);
+      if (targetWidth) {
+        const finalWidth = targetWidth[1];
+        bar.style.width = "0%";
+        setTimeout(() => {
+          bar.style.transition = "width 2s ease-in-out";
+          bar.style.width = finalWidth + "%";
+        }, 500);
+      }
+    });
   });
 </script>
+
+<!-- Extra Animations -->
+<style>
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fadeInUp { animation: fadeInUp 1s ease-out; }
+  .delay-200 { animation-delay: 0.2s; }
+  .delay-400 { animation-delay: 0.4s; }
+
+  @keyframes spinSlow { 100% { transform: rotate(360deg); } }
+  .animate-spin-slow { animation: spinSlow 6s linear infinite; }
+</style>
+
+<!-- Font Awesome -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 {% endblock %}
