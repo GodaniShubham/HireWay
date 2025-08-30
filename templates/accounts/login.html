@@ -12,29 +12,9 @@
 
 <body class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 overflow-x-hidden">
     <div class="background-animation">
-        <!-- Geometric Shapes -->
-        <div class="geometric-shape shape-1"></div>
-        <div class="geometric-shape shape-2"></div>
-        <div class="geometric-shape shape-3"></div>
-        <div class="geometric-shape shape-4"></div>
-        <div class="geometric-shape shape-5"></div>
-
-        <!-- Floating Orbs -->
-        <div class="floating-orb orb-1"></div>
-        <div class="floating-orb orb-2"></div>
-        <div class="floating-orb orb-3"></div>
-
-        <!-- Gradient Waves -->
-        <div class="gradient-wave wave-1"></div>
-        <div class="gradient-wave wave-2"></div>
-        <div class="gradient-wave wave-3"></div>
-
-        <!-- Particle System -->
-        <div class="particles-container"></div>
-
-        <!-- Grid Pattern -->
-        <div class="grid-pattern"></div>
+        <!-- background shapes here -->
     </div>
+
     <!-- Main Content -->
     <main class="flex-1 flex items-center justify-center px-4 py-12 relative">
         <div class="w-full max-w-md">
@@ -51,12 +31,13 @@
                 <form method="post" novalidate>
                     {% csrf_token %}
 
+                    <!-- Global Errors -->
                     {% if messages %}
-                    {% for message in messages %}
-                    <div class="bg-red-100 text-red-600 p-2 rounded mb-3">
-                        {{ message }}
-                    </div>
-                    {% endfor %}
+                        {% for message in messages %}
+                            <div class="bg-red-100 text-red-600 p-2 rounded mb-3 text-sm">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
                     {% endif %}
 
                     <!-- Role -->
@@ -65,20 +46,31 @@
                         <label><input type="radio" name="role" value="student" required> Student</label>
                         <label class="ml-4"><input type="radio" name="role" value="company"> Company</label>
                         <label class="ml-4"><input type="radio" name="role" value="tpo"> TPO</label>
+                        {% if role_error %}
+                            <p class="text-red-500 text-xs mt-1">{{ role_error }}</p>
+                        {% endif %}
                     </div>
 
                     <!-- Email -->
-                    <div>
+                    <div class="mb-4">
                         <label for="email" class="block text-sm font-medium text-slate-700 mb-2">Email *</label>
-                        <input type="email" id="email" name="email" required class="auth-input-enhanced w-full"
+                        <input type="email" id="email" name="email" value="{{ email|default:'' }}" required
+                            class="auth-input-enhanced w-full"
                             placeholder="Enter your email" />
+                        {% if email_error %}
+                            <p class="text-red-500 text-xs mt-1">{{ email_error }}</p>
+                        {% endif %}
                     </div>
 
                     <!-- Password -->
-                    <div class="mt-4">
+                    <div class="mb-4">
                         <label for="password" class="block text-sm font-medium text-slate-700 mb-2">Password *</label>
-                        <input type="password" id="password" name="password" required class="auth-input-enhanced w-full"
+                        <input type="password" id="password" name="password" required
+                            class="auth-input-enhanced w-full"
                             placeholder="Enter your password" />
+                        {% if password_error %}
+                            <p class="text-red-500 text-xs mt-1">{{ password_error }}</p>
+                        {% endif %}
                     </div>
 
                     <!-- Submit -->
@@ -86,7 +78,6 @@
                         Login
                     </button>
                 </form>
-
 
                 <!-- Registration Link -->
                 <div class="mt-6 text-center">
@@ -99,5 +90,4 @@
         </div>
     </main>
 </body>
-
 </html>

@@ -8,29 +8,30 @@
 </h2>
 
 <!-- Timer & Info -->
-<div class="flex justify-between items-center bg-gray-800/60 p-4 rounded-lg mb-6">
-  <span class="text-red-400 text-lg">⏳ Time Left: <span id="timer">{{ time_limit }}:00</span></span>
-  <span class="text-yellow-400 text-lg">Total: {{ total_questions }} Questions</span>
-  <button onclick="finishExam()" class="px-4 py-2 bg-orange-500 text-white rounded-lg hover:scale-105 transition">Finish Exam</button>
+<div class="flex justify-between items-center bg-gray-800/60 p-4 rounded-lg mb-6 shadow-md">
+  <span class="text-red-400 text-lg font-bold">⏳ Time Left: <span id="timer">{{ time_limit }}:00</span></span>
+  <span class="text-yellow-400 text-lg font-semibold">Total: {{ total_questions }} Questions</span>
+  <button onclick="finishExam()" class="px-4 py-2 bg-orange-500 text-white rounded-lg font-semibold shadow-lg">Finish Exam</button>
 </div>
 
 <div class="grid grid-cols-3 gap-6">
   <!-- Question Area -->
-  <div class="col-span-2 glass glow p-6 rounded-2xl animate-fadeInUp">
-    <h3 class="text-xl font-bold mb-4" id="question-text">Question 1</h3>
-    <ul id="options" class="space-y-3 text-gray-300">
+  <div class="col-span-2 glass glow p-6 rounded-2xl animate-fadeInUp shadow-lg border border-gray-700">
+   <h3 class="text-xl font-bold mb-4 text-white" id="question-text"></h3>
+
+    <ul id="options" class="space-y-4 text-gray-200 font-medium">
       <!-- Options load dynamically -->
     </ul>
-    <button onclick="nextQuestion()" class="mt-6 px-4 py-2 bg-blue-500 rounded text-white hover:scale-105">Next Question</button>
+    <button onclick="nextQuestion()" class="mt-6 px-6 py-3 bg-blue-600 rounded-lg text-white font-semibold shadow-md">Next Question</button>
   </div>
 
   <!-- Navigator -->
-  <div class="glass glow p-6 rounded-2xl animate-fadeInUp">
-    <h3 class="text-lg font-semibold mb-4">Question Navigator</h3>
-    <div class="grid grid-cols-5 gap-2">
+  <div class="glass glow p-6 rounded-2xl animate-fadeInUp shadow-lg border border-gray-700">
+    <h3 class="text-lg font-semibold mb-4 text-white">Question Navigator</h3>
+    <div class="grid grid-cols-5 gap-3">
       {% for i in questions %}
         <button id="nav-{{ i.id }}" onclick="goToQuestion({{ i.id }})"
-          class="w-10 h-10 rounded bg-gray-700 text-white hover:bg-blue-500">
+          class="w-12 h-12 rounded-lg bg-gray-700 text-white font-bold shadow-md focus:outline-none focus:ring-2 focus:ring-orange-400">
           {{ i.id }}
         </button>
       {% endfor %}
@@ -41,14 +42,42 @@
 <script>
   let questions = {{ questions|safe }};
   let current = 0;
+  let attempted = new Set();   // ✅ Track attempted questions
 
   function loadQuestion(index) {
-    document.getElementById("question-text").innerText = "Question " + questions[index].id + ": " + questions[index].question;
+    document.getElementById("question-text").innerText = questions[index].question;
+
     let optionsHTML = "";
     questions[index].options.forEach(opt => {
-      optionsHTML += `<li><label><input type="radio" name="q${questions[index].id}"> ${opt}</label></li>`;
+      optionsHTML += `<li class="p-3 rounded-lg bg-gray-800 shadow-md border border-gray-600 cursor-pointer">
+                        <label class="flex items-center gap-3">
+                          <input type="radio" name="q${questions[index].id}" class="accent-orange-500" onchange="markAttempted(${questions[index].id})"> 
+                          <span>${opt}</span>
+                        </label>
+                      </li>`;
     });
     document.getElementById("options").innerHTML = optionsHTML;
+
+    // ✅ Update Navigator Highlight
+    updateNavigator();
+  }
+
+  function markAttempted(qid) {
+    attempted.add(qid);   // mark as attempted
+    updateNavigator();
+  }
+
+  function updateNavigator() {
+    questions.forEach((q, idx) => {
+      let btn = document.getElementById("nav-" + q.id);
+      btn.classList.remove("active-question", "attempted-question");
+
+      if (current === idx) {
+        btn.classList.add("active-question"); // Green for active
+      } else if (attempted.has(q.id)) {
+        btn.classList.add("attempted-question"); // Blue for attempted
+      }
+    });
   }
 
   function nextQuestion() {
@@ -92,10 +121,40 @@
 </script>
 
 <style>
+  /* Attempted Question → Blue */
+  .attempted-question {
+    background: #3b82f6 !important; /* Tailwind Blue-500 */
+    color: white !important;
+    border: 2px solid #60a5fa;
+  }
+
+  /* Current Question → Green */
+  .active-question {
+    background: #22c55e !important; /* Tailwind Green-500 */
+    color: white !important;
+    border: 2px solid #86efac;
+  }
+</style>
+
+
+<style>
   @keyframes fadeInUp {
     from { opacity: 0; transform: translateY(30px); }
     to { opacity: 1; transform: translateY(0); }
   }
   .animate-fadeInUp { animation: fadeInUp 0.8s ease-out; }
+
+  /* Selected Option Highlight */
+  input[type="radio"]:checked + span {
+    color: #f97316; /* orange */
+    font-weight: bold;
+  }
+
+  /* Active Question Button Highlight */
+  .active-question {
+    background: #f97316 !important;
+    color: white !important;
+    border: 2px solid #ffb74d;
+  }
 </style>
 {% endblock %}

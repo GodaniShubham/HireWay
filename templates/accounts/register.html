@@ -127,6 +127,23 @@
             </form>
         </div>
     </div>
+    <div class="bg-red-100 text-red-600 p-2 rounded">{{ message }}</div>
+
 </main>
+<script>
+    {% if messages %}
+        {% for message in messages %}
+            Toastify({
+                text: "{{ message }}",
+                duration: 4000,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "{{ message.tags|yesno:'#dc2626,#16a34a' }}", // red for error, green for success
+                stopOnFocus: true,
+            }).showToast();
+        {% endfor %}
+    {% endif %}
+</script>
+
 </body>
 </html>

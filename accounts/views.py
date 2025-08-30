@@ -61,31 +61,63 @@ def register_view(request):
 
     return render(request, "accounts/register.html")
 
-from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
+# ------------------ LOGIN ------------------
+from django.shortcuts import render, redirect
+from django.contrib import messages
 from .models import UserProfile
 
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
+from .models import UserProfile
+
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
+@csrf_exempt
 def login_view(request):
     if request.method == "POST":
+        role = request.POST.get("role")
         email = request.POST.get("email")
         password = request.POST.get("password")
 
+        # Find user by email
         try:
-            # Find user by email inside the Django User table
-            user = User.objects.get(email=email)
+            user_obj = User.objects.get(email=email)
         except User.DoesNotExist:
-            return render(request, "accounts/login.html", {"error": "Invalid email"})
+            messages.error(request, "No account found with this email.")
+            return render(request, "accounts/login.html", {"email": email})
 
-        # Authenticate using username
-        user = authenticate(request, username=user.username, password=password)
-        if user:
+        # Authenticate using username + password (Django needs username)
+        user = authenticate(request, username=user_obj.username, password=password)
+
+        if user is not None:
+            # Logged in successfully
             login(request, user)
-            return redirect("student_dashboard")
+
+            # Fetch role from UserProfile
+            try:
+                profile = UserProfile.objects.get(user=user)
+            except UserProfile.DoesNotExist:
+                messages.error(request, "Profile not found.")
+                return render(request, "accounts/login.html")
+
+            if profile.role != role:
+                messages.error(request, "Selected role does not match your account role.")
+                return render(request, "accounts/login.html", {"email": email})
+
+            # Redirect based on role
+            if profile.role == "student":
+                return redirect("student_dashboard")
+            elif profile.role == "company":
+                return redirect("company_dashboard")
+            elif profile.role == "tpo":
+                return redirect("tpo_dashboard")
+
         else:
-            return render(request, "accounts/login.html", {"error": "Invalid password"})
+            messages.error(request, "Invalid password.")
 
     return render(request, "accounts/login.html")
 
+# -----------
 # ------------------ LOGOUT ------------------
 def logout_view(request):
     logout(request)

@@ -1,41 +1,58 @@
-from django.shortcuts import render, get_object_or_404
-from HireWay_app.models import Job, Application,Notification,Student  # apne models import kar
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from django.urls import reverse
+from xhtml2pdf import pisa
+from io import BytesIO
 
-# 🔹 Welcome Page
+from .models import Job, Application, Notification, Student, Test, Resume
+from .forms import ResumeForm
+
+
+# --------------------------------------------
+# 🔹 Public / General Views
+# --------------------------------------------
 def welcome(request):
-    return render(request, 'welcome.html')
+    return render(request, "welcome.html")
 
 
+# --------------------------------------------
 # 🔹 Student Dashboard
+# --------------------------------------------
+@login_required
 def student_dashboard(request):
-    # TODO: yahan baad me Student model se data laa sakte hain
+    try:
+        student = Student.objects.get(user=request.user)
+    except Student.DoesNotExist:
+        student = None
+
     context = {
-        'applied_jobs_count': 5,
-        'upcoming_exams_count': 2,
-        'placement_status': 'Not Placed',
-        'notifications': [
-            {'message': 'New job opportunity at XYZ Corp', 'date': '2025-08-29'},
-            {'message': 'Upcoming exam reminder: Aptitude Test', 'date': '2025-08-30'},
-        ],
+        "applied_jobs_count": student.applied_jobs_count if student else 0,
+        "upcoming_exams_count": student.upcoming_exams_count if student else 0,
+        "placement_status": student.placement_status if student else "Not Registered",
+        "notifications": Notification.objects.filter(student=student).order_by("-date")[:5] if student else [],
     }
-    return render(request, 'student_dashboard.html', context)
+    return render(request, "student_dashboard.html", context)
 
 
-# 🔹 Company Dashboard (DB se data)
+# --------------------------------------------
+# 🔹 Company Dashboard
+# --------------------------------------------
+@login_required
 def company_dashboard(request):
-    company_name = request.user.username if request.user.is_authenticated else "Unknown Company"
+    company_name = request.user.username if request.user.is_authenticated else "Unknown"
 
     jobs_posted = Job.objects.filter(company=company_name).count()
     applicants = Application.objects.filter(job__company=company_name).count()
     interviews = Application.objects.filter(job__company=company_name, status="interview_scheduled").count()
     offers = Application.objects.filter(job__company=company_name, status="offer_received").count()
-    success_rate = int((offers / applicants) * 100) if applicants > 0 else 0
 
     stats = {
         "jobs_posted": jobs_posted,
         "applicants": applicants,
         "interviews": interviews,
-        "success_rate": success_rate,
+        "success_rate": round((offers / applicants) * 100, 2) if applicants > 0 else 0,
     }
 
     latest_applicants = (
@@ -49,104 +66,156 @@ def company_dashboard(request):
         "latest_applicants": [
             {"name": app.user.username, "status": app.status, "job": app.job.title}
             for app in latest_applicants
-        ]
+        ],
     }
-    return render(request, "company.html", context)
+    return render(request, "company_dashboard.html", context)
 
 
-# 🔹 TPO Dashboard (abhi dummy, baad me DB connect hoga)
+# --------------------------------------------
+# 🔹 TPO Dashboard
+# --------------------------------------------
+@login_required
 def tpo_dashboard(request):
     stats = {
         "total_companies": 25,
-        "students_registered": 320,
-        "placements_done": 145,
-        "ongoing_drives": 6,
+        "students_registered": Student.objects.count(),
+        "placements_done": Student.objects.filter(placement_status="Placed").count(),
+        "ongoing_drives": Job.objects.count(),
     }
 
-    latest_drives = [
-        {"company": "Google", "role": "SDE", "date": "2025-09-02"},
-        {"company": "Amazon", "role": "Data Analyst", "date": "2025-09-05"},
-        {"company": "Infosys", "role": "System Engineer", "date": "2025-09-08"},
-    ]
+    latest_drives = Job.objects.order_by("-id")[:5]
 
-    return render(request, "tpo.html", {
-        "stats": stats,
-        "latest_drives": latest_drives,
-    })
+    return render(request, "tpo_dashboard.html", {"stats": stats, "latest_drives": latest_drives})
 
 
-# 🔹 Job Applications (dummy for now)
-def job_applications(request):
-    jobs = Job.objects.all()
-    applications = Application.objects.filter(user=request.user) if request.user.is_authenticated else []
-
-    context = {
-        'jobs': jobs,
-        'applications': applications,
-    }
-    return render(request, 'job_applications.html', context)
-
-
-# 🔹 Company Tests (dummy)
+# --------------------------------------------
+# 🔹 Tests & Exams
+# --------------------------------------------
+@login_required
 def company_tests(request):
-    tests = [
-        {"id": 1, "company": "TechCorp", "role": "Software Engineer", "date": "Oct 5, 10:00 AM", "duration": 60, "status": "Scheduled"},
-        {"id": 2, "company": "FinTechX", "role": "Data Analyst", "date": "Sept 28, 2:00 PM", "duration": 45, "status": "Pending"},
-        {"id": 3, "company": "Innovatech", "role": "UI/UX Designer", "date": "Oct 10, 11:00 AM", "duration": 30, "status": "Completed"},
-    ]
+    tests = Test.objects.filter(category="company").order_by("-id")
     return render(request, "company_test.html", {"tests": tests})
 
 
-# 🔹 Start Test (dummy MCQ test)
-def start_test(request, test_id):
-    all_tests = {
-        1: {
-            "title": "TechCorp - Software Engineer Test",
-            "time_limit": 60,
-            "questions": [
-                {"id": 1, "question": "What is the output of 2 + '2' in JavaScript?", "options": ["4", "22", "NaN", "Error"]},
-                {"id": 2, "question": "Python is ___ typed language?", "options": ["Strongly", "Weakly", "Dynamically", "Statically"]},
-                {"id": 3, "question": "Which company developed React?", "options": ["Google", "Microsoft", "Facebook", "Amazon"]},
-            ],
-        },
-        2: {
-            "title": "FinTechX - Data Analyst Test",
-            "time_limit": 45,
-            "questions": [
-                {"id": 1, "question": "Which SQL clause is used to filter records?", "options": ["ORDER BY", "WHERE", "GROUP BY", "JOIN"]},
-                {"id": 2, "question": "What is the output of 5 // 2 in Python?", "options": ["2.5", "3", "2", "Error"]},
-            ],
-        },
-        3: {
-            "title": "Innovatech - UI/UX Designer Test",
-            "time_limit": 30,
-            "questions": [
-                {"id": 1, "question": "Which tool is widely used for prototyping UI?", "options": ["Photoshop", "Figma", "Excel", "Word"]},
-                {"id": 2, "question": "Which color model is used in digital design?", "options": ["CMYK", "RGB", "HSB", "XYZ"]},
-            ],
-        }
-    }
+@login_required
+def practice_exam(request):
+    practice_tests = Test.objects.filter(category="practice").order_by("difficulty")
+    company_tests = Test.objects.filter(category="company").order_by("difficulty")
+    return render(request, "availablemock.html", {
+        "practice_tests": practice_tests,
+        "company_tests": company_tests
+    })
 
-    test = all_tests.get(test_id)
-    if not test:
-        return render(request, "exam_page.html", {"error": "Test not found!"})
+
+@login_required
+def start_test(request, test_id):
+    test = get_object_or_404(Test, id=test_id)
+    # Dummy questions (later replace with real model)
+    base_questions = [
+        {"question": "What is the output of 2 + '2' in JavaScript?", "options": ["4", "22", "NaN", "Error"]},
+        {"question": "Python is ___ typed language?", "options": ["Strongly", "Weakly", "Dynamically", "Statically"]},
+        {"question": "Which company developed React?", "options": ["Google", "Microsoft", "Facebook", "Amazon"]},
+    ]
+
+    questions = []
+    for i in range(test.questions):
+        q = base_questions[i % len(base_questions)].copy()
+        q["id"] = i + 1
+        q["question"] = f"Q{i+1}. {q['question']}"
+        questions.append(q)
 
     return render(request, "exam_page.html", {
-        "test_id": test_id,
-        "title": test["title"],
-        "questions": test["questions"],
-        "total_questions": len(test["questions"]),
-        "time_limit": test["time_limit"],
+        "test": test,
+        "questions": questions,
+        "total_questions": len(questions),
     })
+
+
+@login_required
+def mocktest_result(request):
+    # Dummy result
+    result_data = {
+        "score": 77.5,
+        "correct": 21,
+        "wrong": 9,
+        "sections": [
+            {"name": "Aptitude", "correct": 7, "wrong": 3, "score": 70},
+            {"name": "Reasoning", "correct": 8, "wrong": 2, "score": 80},
+            {"name": "English", "correct": 6, "wrong": 4, "score": 60},
+            {"name": "Coding", "correct": 2, "wrong": 0, "score": 100},
+        ],
+    }
+    return render(request, "mockresult.html", {"result": result_data})
+
+
+# --------------------------------------------
+# 🔹 Resume Builder
+# --------------------------------------------
+@login_required
+def resume_list(request):
+    resumes = Resume.objects.filter(user=request.user)
+    return render(request, "resume/resume_list.html", {"resumes": resumes})
+
+
+@login_required
+def resume_create(request):
+    if request.method == "POST":
+        form = ResumeForm(request.POST)
+        if form.is_valid():
+            resume = form.save(commit=False)
+            resume.user = request.user
+            resume.save()
+            return redirect("resume_detail", pk=resume.pk)
+    else:
+        form = ResumeForm(initial={
+            "full_name": f"{request.user.first_name} {request.user.last_name}".strip(),
+            "email": getattr(request.user, "email", ""),
+        })
+    return render(request, "resume/resume_form.html", {"form": form})
+
+
+@login_required
+def resume_edit(request, pk):
+    resume = get_object_or_404(Resume, pk=pk, user=request.user)
+    if request.method == "POST":
+        form = ResumeForm(request.POST, instance=resume)
+        if form.is_valid():
+            form.save()
+            return redirect("resume_detail", pk=resume.pk)
+    else:
+        form = ResumeForm(instance=resume)
+    return render(request, "resume/resume_form.html", {"form": form, "resume": resume})
+
+
+@login_required
+def resume_detail(request, pk):
+    resume = get_object_or_404(Resume, pk=pk, user=request.user)
+    return render(request, "resume/resume_detail.html", {"resume": resume})
+
+
+@login_required
+def resume_pdf(request, pk):
+    resume = get_object_or_404(Resume, pk=pk, user=request.user)
+    html = render_to_string(f"resume/pdf_{resume.template}.html", {"resume": resume, "user": request.user})
+
+    result = BytesIO()
+    pdf = pisa.pisaDocument(BytesIO(html.encode("UTF-8")), dest=result)
+    if pdf.err:
+        return HttpResponse("Error rendering PDF", status=500, content_type="text/plain")
+
+    response = HttpResponse(result.getvalue(), content_type="application/pdf")
+    response["Content-Disposition"] = f'attachment; filename="{resume.full_name.replace(" ", "_")}_resume.pdf"'
+    return response
+@login_required
 def notifications(request):
-    if not request.user.is_authenticated:
-        return render(request, "notifications.html", {"error": "Please log in first"})
-    
+    student = None
+    notifications = []
+
     try:
         student = Student.objects.get(user=request.user)
+        notifications = Notification.objects.filter(student=student).order_by("-date")
     except Student.DoesNotExist:
-        student = None
+        pass
 
-    all_notifications = Notification.objects.filter(student=student).order_by('-date') if student else []
+    return render(request, "notifications.html", {"notifications": notifications})
 
-    return render(request, "notifications.html", {"notifications": all_notifications})

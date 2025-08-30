@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto py-10">
+
+  <!-- Header -->
+  <h1 class="text-4xl font-extrabold text-center text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500 mb-10 animate-pulse">
+    🚀 Practice & Exam
+  </h1>
+
+  <!-- Tabs -->
+  <div class="flex justify-center mb-8 space-x-2">
+    <button onclick="showTab('practice')" id="practiceBtn" 
+      class="bg-gradient-to-r from-yellow-400 to-yellow-600 hover:from-yellow-500 hover:to-yellow-700 text-black px-6 py-2 rounded-l-xl font-bold shadow-md">
+      Practice & Mockup Exam
+    </button>
+    <button onclick="showTab('company')" id="companyBtn"
+      class="bg-gradient-to-r from-green-500 to-green-700 hover:from-green-600 hover:to-green-800 text-white px-6 py-2 rounded-r-xl font-bold shadow-md">
+      Company’s Test
+    </button>
+  </div>
+
+  <!-- Practice Tests -->
+  <div id="practice" class="grid md:grid-cols-2 gap-6">
+    {% for test in practice_tests %}
+    <div class="bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-700 hover:scale-105 transform transition duration-300">
+      <h2 class="text-2xl font-bold mb-2 text-white">{{ test.title }}</h2>
+      <p class="text-gray-400">⏳ Duration: {{ test.duration }} mins | ❓ Questions: {{ test.questions }}</p>
+      <p class="text-gray-400 mb-3">📘 Topics: {{ test.topics }}</p>
+      <span class="font-semibold 
+        {% if test.difficulty == 'beginner' %} text-green-400 
+        {% elif test.difficulty == 'intermediate' %} text-orange-400 
+        {% else %} text-red-400 {% endif %}">
+        {{ test.get_difficulty_display }}
+      </span>
+      <button onclick="startTest('{{ test.title }}')" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 py-2 rounded-xl font-bold shadow-md">Start Test</button>
+    </div>
+    {% empty %}
+    <p class="text-gray-400">No practice tests available.</p>
+    {% endfor %}
+  </div>
+
+  <!-- Company Tests -->
+  <div id="company" class="hidden grid md:grid-cols-2 gap-6">
+    {% for test in company_tests %}
+    <div class="bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-700 hover:scale-105 transform transition duration-300">
+      <h2 class="text-2xl font-bold mb-2 text-white">{{ test.title }}</h2>
+      <p class="text-gray-400">⏳ Duration: {{ test.duration }} mins | ❓ Questions: {{ test.questions }}</p>
+      <p class="text-gray-400 mb-3">📘 Topics: {{ test.topics }}</p>
+      <span class="font-semibold 
+        {% if test.difficulty == 'beginner' %} text-green-400 
+        {% elif test.difficulty == 'intermediate' %} text-orange-400 
+        {% else %} text-red-400 {% endif %}">
+        {{ test.get_difficulty_display }}
+      </span>
+      <button onclick="startTest('{{ test.title }}')" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 py-2 rounded-xl font-bold shadow-md">Start Test</button>
+    </div>
+    {% empty %}
+    <p class="text-gray-400">No company tests available.</p>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="testModal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
+  <div class="bg-gray-800 rounded-2xl shadow-2xl p-8 w-3/4 md:w-1/2">
+    <h2 id="modalTitle" class="text-2xl font-bold text-yellow-400 mb-4">Test Title</h2>
+    <div id="questionBox" class="text-white mb-6">
+      <p class="mb-2 font-semibold">Q1: What is 2 + 2 ?</p>
+      <ul class="space-y-2">
+        <li><input type="radio" name="q1"> 3</li>
+        <li><input type="radio" name="q1"> 4</li>
+        <li><input type="radio" name="q1"> 5</li>
+      </ul>
+    </div>
+    <div class="flex justify-between">
+      <span id="timer" class="text-red-400 font-bold">⏳ 05:00</span>
+      <button onclick="closeModal()" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-white font-bold">Exit</button>
+      <button onclick="nextQuestion()" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg text-white font-bold">Next</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function showTab(tab) {
+  document.getElementById('practice').classList.add('hidden');
+  document.getElementById('company').classList.add('hidden');
+  document.getElementById(tab).classList.remove('hidden');
+}
+
+// Modal Controls
+function startTest(title) {
+  document.getElementById("modalTitle").innerText = title;
+  document.getElementById("testModal").classList.remove("hidden");
+  startTimer(5 * 60); // 5 min dummy timer
+}
+
+function closeModal() {
+  document.getElementById("testModal").classList.add("hidden");
+  clearInterval(window.testTimer);
+}
+
+function nextQuestion() {
+  alert("Next Question (dummy)... Test will continue!");
+}
+
+// Timer
+function startTimer(duration) {
+  let timer = duration, minutes, seconds;
+  window.testTimer = setInterval(function () {
+    minutes = parseInt(timer / 60, 10);
+    seconds = parseInt(timer % 60, 10);
+    document.getElementById('timer').textContent =
+      "⏳ " + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+
+    if (--timer < 0) {
+      clearInterval(window.testTimer);
+      alert("Time's up!");
+      closeModal();
+    }
+  }, 1000);
+}
+</script>
+{% endblock %}
