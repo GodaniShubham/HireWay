@@ -16,7 +16,7 @@
         .navbar {
             background-color: #1e40af;
         }
-        .search-section {
+        .filter-section {
             background-color: white;
             padding: 1.5rem;
             border-radius: 0.5rem;
@@ -84,7 +84,7 @@
                 <a href="#" class="hover:underline">History</a>
                 <a href="#" class="hover:underline">Profile</a>
             </div>
-            <div>{{ request.user.username }}</div>
+            <div>{% if request.user.is_authenticated %}{{ request.user.username }}{% else %}Guest{% endif %}</div>
         </div>
     </nav>
 
@@ -92,38 +92,37 @@
     <div class="container mx-auto mt-8 px-4">
         <h1 class="text-3xl font-bold text-center mb-6 animate-fadeIn">Job Applications</h1>
 
-        <!-- Search Filters -->
-        <div class="search-section mb-8 animate-fadeIn">
+        <!-- Filter Section (no forms, just select elements) -->
+        <div class="filter-section mb-8 animate-fadeIn">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
-                    <label for="domainSelect" class="block text-sm font-medium text-gray-700">Search by Domain</label>
+                    <label for="domainSelect" class="block text-sm font-medium text-gray-700">Domain</label>
                     <select id="domainSelect" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                         <option value="">All</option>
-                        {% for domain in domains %}
-                            <option value="{{ domain }}">{{ domain }}</option>
-                        {% endfor %}
+                        <option value="software">Software</option>
+                        <option value="marketing">Marketing</option>
                     </select>
                 </div>
                 <div>
-                    <label for="packageSelect" class="block text-sm font-medium text-gray-700">Search by Package</label>
+                    <label for="packageSelect" class="block text-sm font-medium text-gray-700">Package</label>
                     <select id="packageSelect" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                         <option value="">All</option>
-                        {% for pkg in packages %}
-                            <option value="{{ pkg }}">{{ pkg }}</option>
-                        {% endfor %}
+                        <option value="3-5">3-5 LPA</option>
+                        <option value="5-8">5-8 LPA</option>
+                        <option value="8+">8+ LPA</option>
                     </select>
                 </div>
                 <div>
-                    <label for="locationSelect" class="block text-sm font-medium text-gray-700">Search by Location</label>
+                    <label for="locationSelect" class="block text-sm font-medium text-gray-700">Location</label>
                     <select id="locationSelect" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                         <option value="">All</option>
-                        {% for loc in locations %}
-                            <option value="{{ loc }}">{{ loc }}</option>
-                        {% endfor %}
+                        <option value="bangalore">Bangalore</option>
+                        <option value="punjab">Punjab</option>
+                        <option value="gujarat">Gujarat</option>
                     </select>
                 </div>
-                <div class="md:col-span-4">
-                    <label for="searchInput" class="block text-sm font-medium text-gray-700">Search Jobs</label>
+                <div>
+                    <label for="searchInput" class="block text-sm font-medium text-gray-700">Search</label>
                     <input type="text" id="searchInput" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" placeholder="Search jobs...">
                 </div>
             </div>
@@ -132,7 +131,7 @@
         <!-- Job Listings -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8" id="jobListings">
             {% for job in jobs %}
-                <div class="job-item job-card animate-fadeIn" data-domain="{{ job.domain|lower }}" data-package="{{ job.package|lower }}" data-location="{{ job.location|lower }}">
+                <div class="job-item job-card animate-fadeIn" data-domain="{{ job.domain|lower }}" data-package="{{ job.package|lower|slice:':3' }}" data-location="{{ job.location|lower }}">
                     <h5 class="text-lg font-semibold">{{ job.title }} - {{ job.company }}</h5>
                     <p class="text-gray-600">{{ job.location }} | {{ job.package }}</p>
                     <p class="text-gray-600">Eligibility: {{ job.eligibility }}</p>
@@ -208,7 +207,7 @@
 
         function applyJob(company) {
             alert(`Applied to ${company}!`);
-            // AJAX call to server for real application
+            // AJAX call to server for real application (currently just a placeholder)
         }
 
         function viewDetails(company) {

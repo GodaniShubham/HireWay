@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | Company - Placement Tracker{% endblock %}
+
+{% block content %}
+<h2 class="text-4xl font-semibold mb-10 animate-pulse">Welcome, Company 👋</h2>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+  
+  <!-- Jobs Posted -->
+  <div class="glass glow rounded-2xl p-8 transform transition duration-700 hover:scale-105 hover:-rotate-1 animate-fadeInUp">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-xl font-medium">Jobs Posted</h3>
+      <span class="bg-blue-500/20 text-blue-300 text-xs px-3 py-1 rounded-full animate-pulse">Active</span>
+    </div>
+    <div class="flex items-center justify-center">
+      <i class="fas fa-briefcase text-white text-5xl mr-3 animate-bounce"></i>
+      <p class="text-6xl font-extrabold text-blue-400 drop-shadow-lg counter" data-target="{{ stats.jobs_posted }}">0</p>
+    </div>
+    <p class="mt-3 text-gray-300 text-sm">Total job openings created</p>
+  </div>
+
+  <!-- Applicants Received -->
+  <div class="glass glow rounded-2xl p-8 transform transition duration-700 hover:scale-105 hover:rotate-1 animate-fadeInUp delay-200">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-xl font-medium">Applicants Received</h3>
+      <span class="bg-green-500/20 text-green-300 text-xs px-3 py-1 rounded-full">New</span>
+    </div>
+    <div class="flex items-center justify-center">
+      <i class="fas fa-users text-white text-5xl mr-3 animate-spin-slow"></i>
+      <p class="text-6xl font-extrabold text-green-400 drop-shadow-lg counter" data-target="{{ stats.applicants }}">0</p>
+    </div>
+    <p class="mt-3 text-gray-300 text-sm">Students applied across all jobs</p>
+  </div>
+
+  <!-- Interviews Scheduled -->
+  <div class="glass glow rounded-2xl p-8 transform transition duration-700 hover:scale-105 hover:-rotate-1 animate-fadeInUp delay-400">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-xl font-medium">Interviews Scheduled</h3>
+      <span class="bg-orange-500/20 text-orange-300 text-xs px-3 py-1 rounded-full">This Week</span>
+    </div>
+    <div class="flex items-center justify-center">
+      <i class="fas fa-calendar-check text-white text-5xl mr-3 animate-pulse"></i>
+      <p class="text-6xl font-extrabold text-orange-400 drop-shadow-lg counter" data-target="{{ stats.interviews }}">0</p>
+    </div>
+    <p class="mt-3 text-gray-300 text-sm">Upcoming interviews scheduled</p>
+  </div>
+
+</div>
+
+<!-- 2nd Row -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
+  
+  <!-- Placement Success -->
+  <div class="glass glow rounded-2xl p-8 transform transition duration-700 hover:scale-105 animate-fadeInUp delay-600">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-xl font-medium">Placement Success Rate</h3>
+      <span class="bg-indigo-500/20 text-indigo-300 text-xs px-3 py-1 rounded-full">Overall</span>
+    </div>
+    <div class="flex flex-col items-center justify-center">
+      <i class="fas fa-chart-line text-white text-5xl mb-3 animate-bounce"></i>
+      <p class="text-5xl font-extrabold text-indigo-400 drop-shadow-lg counter" data-target="{{ stats.success_rate }}">0</p>
+      <p class="text-gray-300 text-sm mt-2">% of applicants successfully placed</p>
+      <!-- Progress Circle -->
+      <div class="relative w-32 h-32 mt-6">
+        <svg class="w-full h-full">
+          <circle cx="50%" cy="50%" r="45%" stroke="gray" stroke-width="8" fill="none" />
+          <circle cx="50%" cy="50%" r="45%" stroke="url(#grad1)" stroke-width="8" fill="none"
+            stroke-dasharray="283" stroke-dashoffset="283" class="success-circle" stroke-linecap="round" />
+          <defs>
+            <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#6366f1;stop-opacity:1" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <span class="absolute inset-0 flex items-center justify-center text-xl font-bold text-indigo-400">{{ stats.success_rate }}%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Latest Job Applicants -->
+  <div class="glass glow rounded-2xl p-8 transform transition duration-700 hover:scale-105 animate-fadeInUp delay-800">
+    <h3 class="text-xl font-medium mb-4">Latest Job Applicants</h3>
+    <ul class="space-y-3 text-gray-300 text-sm">
+      <li class="flex items-center justify-between">
+        <span>👩‍💻 Alice Johnson</span>
+        <span class="bg-green-500/20 text-green-400 text-xs px-2 py-1 rounded">Shortlisted</span>
+      </li>
+      <li class="flex items-center justify-between">
+        <span>👨‍💻 Rajveer Chavda</span>
+        <span class="bg-yellow-500/20 text-yellow-400 text-xs px-2 py-1 rounded">Interview</span>
+      </li>
+      <li class="flex items-center justify-between">
+        <span>👩‍💻 Sarah Lee</span>
+        <span class="bg-red-500/20 text-red-400 text-xs px-2 py-1 rounded">Pending</span>
+      </li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- Counter & Circle Progress Animation -->
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const counters = document.querySelectorAll(".counter");
+    counters.forEach(counter => {
+      counter.innerText = "0";
+      const updateCounter = () => {
+        const target = +counter.getAttribute("data-target");
+        const current = +counter.innerText;
+        const increment = Math.ceil(target / 50); 
+        if (current < target) {
+          counter.innerText = current + increment;
+          setTimeout(updateCounter, 30);
+        } else {
+          counter.innerText = target;
+        }
+      };
+      updateCounter();
+    });
+
+    // Circle Progress animation
+    const circle = document.querySelector(".success-circle");
+    if (circle) {
+      const percent = {{ stats.success_rate }};
+      const offset = 283 - (283 * percent / 100);
+      setTimeout(() => {
+        circle.style.transition = "stroke-dashoffset 2s ease-in-out";
+        circle.style.strokeDashoffset = offset;
+      }, 500);
+    }
+  });
+</script>
+
+<style>
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fadeInUp { animation: fadeInUp 1s ease-out; }
+  .delay-200 { animation-delay: 0.2s; }
+  .delay-400 { animation-delay: 0.4s; }
+  .delay-600 { animation-delay: 0.6s; }
+  .delay-800 { animation-delay: 0.8s; }
+
+  @keyframes spinSlow { 100% { transform: rotate(360deg); } }
+  .animate-spin-slow { animation: spinSlow 6s linear infinite; }
+</style>
+
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+{% endblock %}
