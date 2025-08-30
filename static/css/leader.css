@@ -1,0 +1,180 @@
+/* General container styling */
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 30px;
+            background: linear-gradient(135deg, #e0e7ff, #f3e8ff); /* Softer gradient */
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+            animation: fadeIn 1s ease-out;
+        }
+
+        /* Page title styling */
+        .page-title {
+            text-align: center;
+            font-size: 3.5em;
+            margin-bottom: 40px;
+            color: #1e3a8a; /* Deep blue for vibrancy */
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, #1e3a8a, #7c3aed); /* Gradient text */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: slideIn 1.2s ease-out;
+        }
+
+        /* Leaderboard table styling */
+        .leaderboard-table {
+            margin-top: 40px;
+            padding: 25px;
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            animation: fadeInUp 1.5s ease-out;
+        }
+
+        .leaderboard-table-content {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            text-align: center;
+            font-family: 'Roboto', sans-serif;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .leaderboard-table-content th, .leaderboard-table-content Díaz {
+            padding: 20px;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+        }
+
+        .leaderboard-table-content th {
+            background: linear-gradient(135deg, #3b82f6, #1e3a8a); /* Vibrant header gradient */
+            color: #fff;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .leaderboard-row {
+            transition: all 0.3s ease-in-out;
+        }
+
+        .leaderboard-row:hover {
+            background: linear-gradient(90deg, #f3f4f6, #e0e7ff);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .highlight-row {
+            background: linear-gradient(90deg, #22c55e, #16a34a); /* Green gradient for highlight */
+            color: #fff;
+            font-weight: 600;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .highlight-row:hover {
+            background: linear-gradient(90deg, #16a34a, #15803d);
+        }
+
+        /* Badge styling */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .badge-gold {
+            background: linear-gradient(135deg, #facc15, #f59e0b);
+            color: #fff;
+        }
+
+        .badge-silver {
+            background: linear-gradient(135deg, #d1d5db, #9ca3af);
+            color: #fff;
+        }
+
+        .badge-bronze {
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            color: #fff;
+        }
+
+        .badge-highlight {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .badge-default {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .badge:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            0% { opacity: 0; transform: translateY(-20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px;
+                padding: 20px;
+            }
+
+            .page-title {
+                font-size: 2.5em;
+            }
+
+            .leaderboard-table {
+                padding: 15px;
+            }
+
+            .leaderboard-table-content th, .leaderboard-table-content td {
+                padding: 12px;
+                font-size: 1em;
+            }
+
+            .badge {
+                padding: 6px 12px;
+                font-size: 0.85em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-title {
+                font-size: 2em;
+            }
+
+            .leaderboard-table-content th, .leaderboard-table-content td {
+                padding: 10px;
+                font-size: 0.9em;
+            }
+
+            .leaderboard-row:hover {
+                transform: none; /* Disable hover transform on small screens */
+            }
+        }

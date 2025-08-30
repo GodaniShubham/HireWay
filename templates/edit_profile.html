@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto mt-10 p-8 rounded-2xl bg-gradient-to-br from-purple-600 via-indigo-700 to-purple-800 shadow-2xl backdrop-blur-xl border border-gray-700 animate-fadeIn">
+
+    <!-- Profile Title -->
+    <h1 class="text-center text-4xl font-extrabold uppercase tracking-widest bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent animate-slideIn drop-shadow-lg">
+        Edit Profile
+    </h1>
+
+    <!-- Edit Profile Form Section -->
+    <div class="mt-10 p-6 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-700 shadow-xl transform hover:scale-105 hover:shadow-2xl transition duration-500 ease-in-out animate-fadeInUp">
+        <form method="POST" class="space-y-6">
+            {% csrf_token %}
+            
+            <!-- Render form fields dynamically -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {{ form.as_p }}
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="inline-block bg-gradient-to-r from-green-400 to-green-600 text-white font-semibold py-2 px-6 rounded-full text-lg hover:bg-green-500 transform hover:scale-110 hover:shadow-2xl transition duration-300 ease-in-out animate-glowEffect">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<!-- Tailwind Animations -->
+<style>
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    .animate-fadeIn {
+        animation: fadeIn 1.5s ease-out;
+    }
+
+    @keyframes slideIn {
+        from { opacity: 0; transform: translateY(-30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-slideIn {
+        animation: slideIn 1s ease-out;
+    }
+
+    @keyframes fadeInUp {
+        0% { opacity: 0; transform: translateY(30px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-fadeInUp {
+        animation: fadeInUp 1s ease-out;
+    }
+
+    @keyframes glowEffect {
+        0% { box-shadow: 0 0 15px rgba(0, 255, 0, 0.5); }
+        50% { box-shadow: 0 0 25px rgba(0, 255, 0, 0.7); }
+        100% { box-shadow: 0 0 15px rgba(0, 255, 0, 0.5); }
+    }
+
+    .animate-glowEffect {
+        animation: glowEffect 2s ease-in-out infinite;
+    }
+</style>
+
+{% endblock %}

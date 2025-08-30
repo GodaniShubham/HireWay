@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ resume.full_name }} - Resume</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+    <div class="max-w-4xl mx-auto bg-white shadow-lg p-8 grid grid-cols-3 gap-6">
+        <div class="col-span-1 bg-blue-700 text-white p-6 rounded">
+            <h1 class="text-2xl font-bold mb-2">{{ resume.full_name }}</h1>
+            <p>{{ resume.email }}</p>
+            <p>{{ resume.phone }}</p>
+            <p>{{ resume.address }}</p>
+        </div>
+        <div class="col-span-2">
+            <h2 class="text-xl font-semibold border-b pb-1">Objective</h2>
+            <p class="mb-4">{{ resume.objective }}</p>
+            <h2 class="text-xl font-semibold border-b pb-1">Education</h2>
+            <p>{{ resume.course }} - {{ resume.college }} ({{ resume.passing_year }})</p>
+            <h2 class="text-xl font-semibold border-b pb-1 mt-4">Skills</h2>
+            <ul class="list-disc ml-5">
+                {% for skill in resume.skills.split(",") %}
+                <li>{{ skill }}</li>
+                {% endfor %}
+            </ul>
+            <h2 class="text-xl font-semibold border-b pb-1 mt-4">Projects</h2>
+            <p>{{ resume.projects|linebreaks }}</p>
+            <h2 class="text-xl font-semibold border-b pb-1 mt-4">Certifications</h2>
+            <p>{{ resume.certifications|linebreaks }}</p>
+        </div>
+    </div>
+</body>
+</html>

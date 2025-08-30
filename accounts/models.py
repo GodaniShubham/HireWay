@@ -17,7 +17,6 @@ class UserProfile(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.role}"
 
-from django.db import models
 from django.contrib.auth.hashers import make_password, check_password
 
 class UserAccount(models.Model):

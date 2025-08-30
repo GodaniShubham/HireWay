@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ resume.full_name }} - Resume</title>
+  <style>
+    body { font-family: 'Verdana', sans-serif; font-size: 12px; color: #333; }
+    .container { width: 800px; margin: 0 auto; background: #fff; padding: 20px; line-height: 1.6; }
+    .header { text-align: center; border-bottom: 1px dashed #ccc; padding-bottom: 10px; margin-bottom: 20px; }
+    .section { margin: 20px 0; }
+    .section h2 { color: #2980b9; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>{{ resume.full_name }}</h1>
+      <p>{{ resume.email }} | {{ resume.phone }}</p>
+    </div>
+    <div class="section">
+      <h2>Objective</h2>
+      <p>{{ resume.objective|linebreaksbr }}</p>
+    </div>
+    <div class="section">
+      <h2>Education</h2>
+      <p>{{ resume.college }} - {{ resume.course }}<br>Passing Year: {{ resume.passing_year }} | CGPA: {{ resume.cgpa }}</p>
+    </div>
+    <div class="section">
+      <h2>Skills</h2>
+      <p>{{ resume.skills|linebreaksbr }}</p>
+    </div>
+    <div class="section">
+      <h2>Projects</h2>
+      <p>{{ resume.projects|linebreaksbr }}</p>
+    </div>
+    <div class="section">
+      <h2>Certifications</h2>
+      <p>{{ resume.certifications|linebreaksbr }}</p>
+    </div>
+  </div>
+</body>
+</html>

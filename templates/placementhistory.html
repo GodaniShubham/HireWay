@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Main Container -->
+<div class="max-w-6xl mx-auto mt-10 p-8 rounded-2xl bg-gradient-to-br from-indigo-700 via-purple-700 to-indigo-900 shadow-2xl backdrop-blur-xl border border-gray-700 animate-fadeIn">
+
+    <!-- Title -->
+    <h1 class="text-center text-4xl font-extrabold uppercase tracking-widest bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent animate-slideIn drop-shadow-lg">
+        Placement Opportunities
+    </h1>
+
+    <!-- Placement Details Section -->
+    <div class="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for job in jobs %}
+        <div class="bg-gradient-to-br from-indigo-600 to-purple-600 p-6 rounded-xl shadow-xl transform hover:scale-105 hover:shadow-2xl transition duration-300 ease-in-out animate-fadeInUp">
+            <div class="flex flex-col h-full">
+                <h3 class="text-2xl font-semibold text-white">{{ job.title }}</h3>
+                <p class="mt-2 text-gray-200">{{ job.description|slice:":150" }}...</p>
+                <div class="flex-1"></div> <!-- Spacer to push the button to the bottom -->
+                <div class="flex justify-between items-center mt-4">
+                    <span class="text-sm text-gray-300">{{ job.company.name }}</span>
+                    <span class="bg-gray-800 text-white px-3 py-1 text-xs rounded-full">{{ job.location }}</span>
+                </div>
+                <a href="{% url 'job_detail' job.id %}" class="mt-4 inline-block bg-gradient-to-r from-green-400 to-green-600 text-white font-semibold py-2 px-4 rounded-full text-sm hover:bg-green-500 transform hover:scale-105 hover:shadow-2xl transition duration-300 ease-in-out">
+                    Apply Now
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Job Statistics Section -->
+    <div class="mt-12 p-6 rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-700 shadow-xl">
+        <h3 class="text-3xl font-extrabold text-white">Statistics</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 mt-6">
+            <div class="bg-gradient-to-r from-yellow-500 to-yellow-600 p-6 rounded-xl shadow-lg text-center text-white transform hover:scale-105 hover:shadow-2xl transition duration-300 ease-in-out animate-fadeInUp">
+                <h4 class="text-lg font-semibold cursor-pointer" onclick="toggleJobsDetails()">Total Jobs</h4>
+                <p class="text-3xl">{{ total_jobs }}</p>
+                <div id="jobs-details" class="hidden mt-4 bg-gray-800 text-white p-4 rounded-xl">
+                    <ul>
+                        {% for job in jobs %}
+                            <li>{{ job.title }} - {{ job.company.name }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="bg-gradient-to-r from-blue-500 to-blue-600 p-6 rounded-xl shadow-lg text-center text-white transform hover:scale-105 hover:shadow-2xl transition duration-300 ease-in-out animate-fadeInUp">
+                <h4 class="text-lg font-semibold">Total Applications</h4>
+                <p class="text-3xl">{{ total_applications }}</p>
+            </div>
+            <div class="bg-gradient-to-r from-red-500 to-red-600 p-6 rounded-xl shadow-lg text-center text-white transform hover:scale-105 hover:shadow-2xl transition duration-300 ease-in-out animate-fadeInUp">
+                <h4 class="text-lg font-semibold">Pending Applications</h4>
+                <p class="text-3xl">{{ pending_applications }}</p>
+            </div>
+            <div class="bg-gradient-to-r from-green-500 to-green-600 p-6 rounded-xl shadow-lg text-center text-white transform hover:scale-105 hover:shadow-2xl transition duration-300 ease-in-out animate-fadeInUp">
+                <h4 class="text-lg font-semibold">Accepted Applications</h4>
+                <p class="text-3xl">{{ accepted_applications }}</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Tailwind Animations -->
+<style>
+    @keyframes fadeIn { 
+        from { opacity: 0; } 
+        to { opacity: 1; } 
+    }
+    .animate-fadeIn { 
+        animation: fadeIn 1.5s ease-out; 
+    }
+
+    @keyframes slideIn { 
+        from { opacity: 0; transform: translateY(-30px); } 
+        to { opacity: 1; transform: translateY(0); } 
+    }
+    .animate-slideIn { 
+        animation: slideIn 1s ease-out; 
+    }
+
+    @keyframes fadeInUp { 
+        0% { opacity: 0; transform: translateY(30px); } 
+        100% { opacity: 1; transform: translateY(0); } 
+    }
+
+    .animate-fadeInUp {
+        animation: fadeInUp 1s ease-out;
+    }
+
+    @keyframes glowEffect { 
+        0% { box-shadow: 0 0 15px rgba(0, 255, 0, 0.5); }
+        50% { box-shadow: 0 0 25px rgba(0, 255, 0, 0.7); }
+        100% { box-shadow: 0 0 15px rgba(0, 255, 0, 0.5); }
+    }
+
+    .animate-glowEffect {
+        animation: glowEffect 2s ease-in-out infinite;
+    }
+</style>
+
+<!-- JavaScript for toggling job details -->
+<script>
+    function toggleJobsDetails() {
+        const jobsDetails = document.getElementById('jobs-details');
+        jobsDetails.classList.toggle('hidden'); // Toggle visibility of job list
+    }
+</script>
+
+{% endblock %}

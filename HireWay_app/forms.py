@@ -1,5 +1,5 @@
 from django import forms
-from .models import Resume, JobApplication
+from .models import Resume, JobApplication, PlacementHistory,User
 
 class ResumeForm(forms.ModelForm):
     class Meta:
@@ -23,3 +23,19 @@ class JobApplicationForm(forms.ModelForm):
         widgets = {
             'cover_letter': forms.Textarea(attrs={'rows': 4}),
         }
+class PlacementHistoryForm(forms.ModelForm):
+    class Meta:
+        model = PlacementHistory
+        fields = ['user', 'company_name', 'application_date', 'test_score', 'status', 'test_status', 'interview_status']
+        widgets = {
+            'application_date': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+
+class EditProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'email']
+
+
+

@@ -1,80 +1,88 @@
-{% extends "base.html" %}
-{% load widget_tweaks %}
-{% block content %}
-<div class="max-w-4xl mx-auto p-6">
-    <h2 class="text-3xl font-bold text-white mb-6">Create / Edit Resume</h2>
+    {% extends "base.html" %}
+    {% load widget_tweaks %}
+    {% block content %}
+    <div class="max-w-4xl mx-auto p-6">
+        <h2 class="text-3xl font-bold text-white mb-6">Create / Edit Resume</h2>
 
-    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
-        <div class="mb-6">
-            <h3 class="text-lg font-semibold text-gray-200 mb-4">Select a Resume Template</h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <button type="button" class="btn-template bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-lg transition duration-300" data-template="1">Template 1</button>
-                <button type="button" class="btn-template bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-lg transition duration-300" data-template="2">Template 2</button>
-                <button type="button" class="btn-template bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-lg transition duration-300" data-template="3">Template 3</button>
+        <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold text-gray-200 mb-4">Select a Resume Template</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <button type="button" class="btn-template bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-lg transition duration-300" data-template="1">Template 1</button>
+                    <button type="button" class="btn-template bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-lg transition duration-300" data-template="2">Template 2</button>
+                    <button type="button" class="btn-template bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-lg transition duration-300" data-template="3">Template 3</button>
+                </div>
+                {{ form.template.label_tag }} {{ form.template|add_class:"w-full p-2 bg-gray-700 text-white rounded" }}
             </div>
-            {{ form.template.label_tag }} {{ form.template|add_class:"w-full p-2 bg-gray-700 text-white rounded" }}
+
+            <form method="post" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {% csrf_token %}
+                <div class="col-span-1">
+                    <label class="block text-sm font-medium text-gray-300 mb-1">{{ form.full_name.label }}</label>
+                    {{ form.full_name|add_class:"w-full p-2 bg-gray-700 text-white rounded" }}
+                </div>
+                <div class="col-span-1">
+                    <label class="block text-sm font-medium text-gray-300 mb-1">{{ form.email.label }}</label>
+                    {{ form.email|add_class:"w-full p-2 bg-gray-700 text-white rounded" }}
+                </div>
+                <div class="col-span-1">
+                    <label class="block text-sm font-medium text-gray-300 mb-1">{{ form.phone.label }}</label>
+                    {{ form.phone|add_class:"w-full p-2 bg-gray-700 text-white rounded" }}
+                </div>
+                <div class="col-span-1">
+                    <label class="block text-sm font-medium text-gray-300 mb-1">{{ form.college.label }}</label>
+                    {{ form.college|add_class:"w-full p-2 bg-gray-700 text-white rounded" }}
+                </div>
+                <div class="col-span-1">
+                    <label class="block text-sm font-medium text-gray-300 mb-1">{{ form.course.label }}</label>
+                    {{ form.course|add_class:"w-full p-2 bg-gray-700 text-white rounded" }}
+                </div>
+                <div class="col-span-1">
+                    <label class="block text-sm font-medium text-gray-300 mb-1">{{ form.passing_year.label }}</label>
+                    {{ form.passing_year|add_class:"w-full p-2 bg-gray-700 text-white rounded" }}
+                </div>
+                <div class="col-span-1">
+                    <label class="block text-sm font-medium text-gray-300 mb-1">{{ form.cgpa.label }}</label>
+                    {{ form.cgpa|add_class:"w-full p-2 bg-gray-700 text-white rounded" }}
+                </div>
+                <div class="col-span-2">
+                    <label class="block text-sm font-medium text-gray-300 mb-1">{{ form.address.label }}</label>
+                    {{ form.address|add_class:"w-full p-2 bg-gray-700 text-white rounded" }}
+                </div>
+                <div class="col-span-2">
+                    <label class="block text-sm font-medium text-gray-300 mb-1">{{ form.objective.label }}</label>
+                    {{ form.objective|add_class:"w-full p-2 bg-gray-700 text-white rounded" }}
+                </div>
+                <div class="col-span-2">
+                    <label class="block text-sm font-medium text-gray-300 mb-1">{{ form.skills.label }}</label>
+                    {{ form.skills|add_class:"w-full p-2 bg-gray-700 text-white rounded" }}
+                    <p class="text-sm text-gray-500 mt-1">Separate skills with commas or new lines.</p>
+                </div>
+                <div class="col-span-2">
+                    <label class="block text-sm font-medium text-gray-300 mb-1">{{ form.projects.label }}</label>
+                    {{ form.projects|add_class:"w-full p-2 bg-gray-700 text-white rounded" }}
+                </div>
+                <div class="col-span-2">
+                    <label class="block text-sm font-medium text-gray-300 mb-1">{{ form.certifications.label }}</label>
+                    {{ form.certifications|add_class:"w-full p-2 bg-gray-700 text-white rounded" }}
+                </div>
+
+                <div class="col-span-2 mt-6 flex gap-4">
+                    <button type="submit" class="btn-primary bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition duration-300">Save Resume</button>
+                    {% if resume %}
+                    <a href="{% url 'resume_pdf' resume.pk %}" class="btn-secondary bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-lg transition duration-300">Download PDF</a>
+                    {% endif %}
+                    <a href="{% url 'resume_list' %}" class="btn-ghost bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-lg transition duration-300">Back</a>
+                </div>
+            </form>
         </div>
-
-        <form method="post" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {% csrf_token %}
-            <div class="col-span-1">
-                <label class="block text-sm font-medium text-gray-300 mb-1">{{ form.full_name.label }}</label>
-                {{ form.full_name|add_class:"w-full p-2 bg-gray-700 text-white rounded" }}
-            </div>
-            <div class="col-span-1">
-                <label class="block text-sm font-medium text-gray-300 mb-1">{{ form.email.label }}</label>
-                {{ form.email|add_class:"w-full p-2 bg-gray-700 text-white rounded" }}
-            </div>
-            <div class="col-span-1">
-                <label class="block text-sm font-medium text-gray-300 mb-1">{{ form.phone.label }}</label>
-                {{ form.phone|add_class:"w-full p-2 bg-gray-700 text-white rounded" }}
-            </div>
-            <div class="col-span-1">
-                <label class="block text-sm font-medium text-gray-300 mb-1">{{ form.college.label }}</label>
-                {{ form.college|add_class:"w-full p-2 bg-gray-700 text-white rounded" }}
-            </div>
-            <div class="col-span-1">
-                <label class="block text-sm font-medium text-gray-300 mb-1">{{ form.course.label }}</label>
-                {{ form.course|add_class:"w-full p-2 bg-gray-700 text-white rounded" }}
-            </div>
-            <div class="col-span-1">
-                <label class="block text-sm font-medium text-gray-300 mb-1">{{ form.passing_year.label }}</label>
-                {{ form.passing_year|add_class:"w-full p-2 bg-gray-700 text-white rounded" }}
-            </div>
-            <div class="col-span-1">
-                <label class="block text-sm font-medium text-gray-300 mb-1">{{ form.cgpa.label }}</label>
-                {{ form.cgpa|add_class:"w-full p-2 bg-gray-700 text-white rounded" }}
-            </div>
-            <div class="col-span-2">
-                <label class="block text-sm font-medium text-gray-300 mb-1">{{ form.address.label }}</label>
-                {{ form.address|add_class:"w-full p-2 bg-gray-700 text-white rounded" }}
-            </div>
-            <div class="col-span-2">
-                <label class="block text-sm font-medium text-gray-300 mb-1">{{ form.objective.label }}</label>
-                {{ form.objective|add_class:"w-full p-2 bg-gray-700 text-white rounded" }}
-            </div>
-            <div class="col-span-2">
-                <label class="block text-sm font-medium text-gray-300 mb-1">{{ form.skills.label }}</label>
-                {{ form.skills|add_class:"w-full p-2 bg-gray-700 text-white rounded" }}
-                <p class="text-sm text-gray-500 mt-1">Separate skills with commas or new lines.</p>
-            </div>
-            <div class="col-span-2">
-                <label class="block text-sm font-medium text-gray-300 mb-1">{{ form.projects.label }}</label>
-                {{ form.projects|add_class:"w-full p-2 bg-gray-700 text-white rounded" }}
-            </div>
-            <div class="col-span-2">
-                <label class="block text-sm font-medium text-gray-300 mb-1">{{ form.certifications.label }}</label>
-                {{ form.certifications|add_class:"w-full p-2 bg-gray-700 text-white rounded" }}
-            </div>
-
-            <div class="col-span-2 mt-6 flex gap-4">
-                <button type="submit" class="btn-primary bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition duration-300">Save Resume</button>
-                {% if resume %}
-                <a href="{% url 'resume_pdf' resume.pk %}" class="btn-secondary bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-lg transition duration-300">Download PDF</a>
-                {% endif %}
-                <a href="{% url 'resume_list' %}" class="btn-ghost bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-lg transition duration-300">Back</a>
-            </div>
-        </form>
     </div>
-</div>
-{% endblock %}
+    <script>
+        document.querySelectorAll('.btn-template').forEach(button => {
+            button.addEventListener('click', () => {
+                const template = button.getAttribute('data-template');
+                document.querySelector('[name="template"]').value = `template${template}`;
+            });
+        });
+    </script>
+    {% endblock %}

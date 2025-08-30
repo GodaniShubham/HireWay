@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Profile Page Container -->
+<div class="max-w-6xl mx-auto mt-10 p-8 rounded-2xl bg-gradient-to-br from-purple-600 via-indigo-700 to-purple-800 shadow-2xl backdrop-blur-xl border border-gray-700 animate-fadeIn">
+
+    <!-- Profile Title -->
+    <h1 class="text-center text-4xl font-extrabold uppercase tracking-widest bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent animate-slideIn drop-shadow-lg">
+        My Profile
+    </h1>
+
+    <!-- Profile Content Section -->
+    <div class="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
+
+        <!-- Profile Picture and Basic Info -->
+        <div class="flex flex-col items-center p-6 bg-gradient-to-br from-purple-700 to-indigo-800 rounded-xl shadow-xl transform hover:scale-105 hover:shadow-2xl transition duration-300 ease-in-out animate-fadeInUp">
+            <img src="https://via.placeholder.com/150" alt="Profile Picture" class="w-36 h-36 rounded-full border-4 border-white shadow-xl">
+            <h3 class="mt-6 text-3xl font-semibold text-white">{{ profile.name }}</h3>
+            <p class="mt-2 text-gray-300 text-xl">{{ profile.title }}</p>
+            <p class="mt-4 text-gray-200 text-lg">Email: {{ profile.email }}</p>
+            <p class="mt-2 text-gray-200 text-lg">Location: {{ profile.location }}</p>
+        </div>
+
+        <!-- Profile Details Section -->
+        <div class="bg-gradient-to-br from-purple-700 to-indigo-800 p-6 rounded-xl shadow-xl transform hover:scale-105 hover:shadow-2xl transition duration-300 ease-in-out animate-fadeInUp">
+            <h3 class="text-2xl font-semibold text-white">About Me</h3>
+            <p class="mt-4 text-gray-200">{{ profile.about }}</p>
+
+            <h3 class="mt-6 text-2xl font-semibold text-white">Skills</h3>
+            <ul class="mt-4 text-gray-200 space-y-2">
+                {% for skill in profile.skills %}
+                    <li class="flex items-center space-x-2">
+                        <span class="text-lg">✔</span> <span>{{ skill }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+
+            <h3 class="mt-6 text-2xl font-semibold text-white">Experience</h3>
+            <ul class="mt-4 text-gray-200 space-y-2">
+                {% for exp in profile.experience %}
+                    <li>{{ exp }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+    </div>
+
+    <!-- Edit and Delete Buttons -->
+    <div class="flex justify-center mt-8 gap-6">
+        <a href="{% url 'edit_profile' %}" class="inline-block bg-gradient-to-r from-green-400 to-green-600 text-white font-semibold py-2 px-6 rounded-full text-lg hover:bg-green-500 transform hover:scale-110 hover:shadow-2xl transition duration-300 ease-in-out">
+            Edit Profile
+        </a>
+        <a href="{% url 'delete_profile' %}" class="inline-block bg-gradient-to-r from-red-400 to-red-600 text-white font-semibold py-2 px-6 rounded-full text-lg hover:bg-red-500 transform hover:scale-110 hover:shadow-2xl transition duration-300 ease-in-out">
+            Delete Profile
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

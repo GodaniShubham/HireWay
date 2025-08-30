@@ -72,7 +72,11 @@
       border-color: #3b82f6;
       outline: none;
     }
+    
   </style>
+  {% comment %} {% block extra_css %}
+
+  {% endblock %} {% endcomment %}
 </head>
 <body class="text-white font-sans">
 
@@ -85,15 +89,18 @@
         <li><a href="{% url 'job_list' %}" class="nav-link hover:text-yellow-300 transition">Jobs</a></li>
         <li><a href="{% url 'practice_exam' %}" class="nav-link hover:text-yellow-300 transition">Practice & Exams</a></li>
         <li><a href="{% url 'resume_list' %}" class="nav-link hover:text-yellow-300 transition">Resume Builder</a></li>
-        <li><a href="{% url 'student_dashboard' %}" class="nav-link hover:text-yellow-300 transition">Leaderboard</a></li>
-        <li><a href="{% url 'student_dashboard' %}" class="nav-link hover:text-yellow-300 transition">History</a></li>
-        <li><a href="{% url 'student_dashboard' %}" class="nav-link hover:text-yellow-300 transition">Profile</a></li>
+        <li><a href="{% url 'leaderboard' %}" class="nav-link hover:text-yellow-300 transition">Leaderboard</a></li>
+        <li><a href="{% url 'placement_history' %}" class="nav-link hover:text-yellow-300 transition">History</a></li>
+      
       </ul>
-      <div class="flex items-center space-x-2">
-        <span class="text-white font-semibold">John Doe</span>
-        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="w-10 h-10 rounded-full border-2 border-yellow-300">
-      </div>
-    </div>
+     <div class="flex items-center space-x-2">
+    <!-- Link to Profile Page -->
+    <a href="{% url 'profile' %}" class="flex items-center space-x-2">
+        <span class="text-white font-semibold">{{ user.username }}</span> <!-- Dynamically display the user's name -->
+        <img src="{{ user.profile.picture.url }}" class="w-10 h-10 rounded-full border-2 border-yellow-300" alt="Profile Picture"> <!-- Dynamically link to the profile picture -->
+    </a>
+</div>
+
   </nav>
 
   <!-- Page Content -->

@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="max-w-6xl mx-auto my-24 p-12 rounded-3xl bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 shadow-2xl border border-gray-800 animate-fadeIn">
+
+    <!-- Title -->
+    <h1 class="text-center text-5xl font-extrabold tracking-wide bg-gradient-to-r from-indigo-400 via-purple-500 to-pink-500 bg-clip-text text-transparent animate-slideIn drop-shadow-lg">
+        Campus Leaderboard
+    </h1>
+    <p class="text-center text-gray-400 mt-3 text-lg animate-fadeIn">
+        Recognizing outstanding performance and achievement
+    </p>
+
+    <!-- Table -->
+    <div class="mt-12 overflow-x-auto rounded-2xl shadow-xl bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-xl p-6 border border-gray-700">
+        <table class="w-full border-collapse text-center text-gray-200 text-lg">
+            <thead>
+                <tr class="bg-gradient-to-r from-indigo-600 to-purple-700 text-white text-sm uppercase tracking-wider">
+                    <th class="px-6 py-4 rounded-tl-xl">Rank</th>
+                    <th class="px-6 py-4">Student Name</th>
+                    <th class="px-6 py-4">Score</th>
+                    <th class="px-6 py-4 rounded-tr-xl">Badges</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in leaderboard %}
+                    <tr class="transition duration-300 ease-in-out hover:bg-gradient-to-r hover:from-indigo-900/60 hover:to-purple-900/60 hover:scale-[1.01] hover:shadow-lg 
+                               {% if entry.badge == 'Your Rank' %} bg-gradient-to-r from-emerald-600/90 to-green-700/90 text-white font-bold animate-glowEffect{% endif %}">
+                        
+                        <!-- Rank with Styled Highlight -->
+                        <td class="px-6 py-4 animate-fadeInUp font-bold text-xl">
+                            {% if entry.rank == 1 %}
+                                <span class="inline-block px-4 py-1 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-gray-900 font-bold shadow-md">#1</span>
+                            {% elif entry.rank == 2 %}
+                                <span class="inline-block px-4 py-1 rounded-full bg-gradient-to-r from-gray-300 to-gray-500 text-gray-900 font-semibold shadow-md">#2</span>
+                            {% elif entry.rank == 3 %}
+                                <span class="inline-block px-4 py-1 rounded-full bg-gradient-to-r from-orange-300 to-orange-500 text-white font-semibold shadow-md">#3</span>
+                            {% else %}
+                                {{ entry.rank }}
+                            {% endif %}
+                        </td>
+
+                        <!-- Name -->
+                        <td class="px-6 py-4 animate-fadeInUp">{{ entry.name }}</td>
+
+                        <!-- Score -->
+                        <td class="px-6 py-4 animate-fadeInUp font-semibold">{{ entry.score }}</td>
+
+                        <!-- Badge -->
+                        <td class="px-6 py-4">
+                            <span class="inline-flex items-center px-5 py-2 rounded-full text-sm font-semibold shadow-md transition-transform transform hover:scale-110 badge
+                                {% if entry.badge == 'Gold' %} bg-gradient-to-r from-yellow-300 to-yellow-500 text-gray-900
+                                {% elif entry.badge == 'Silver' %} bg-gradient-to-r from-gray-200 to-gray-500 text-gray-900
+                                {% elif entry.badge == 'Bronze' %} bg-gradient-to-r from-orange-400 to-orange-600 text-white
+                                {% elif entry.badge == 'Your Rank' %} bg-gradient-to-r from-green-400 to-green-600 text-white font-bold
+                                {% else %} bg-gray-700 text-gray-200 {% endif %}">
+                                {{ entry.badge }}
+                            </span>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Tailwind Animations -->
+<style>
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .animate-fadeIn { animation: fadeIn 1s ease-out; }
+
+    @keyframes slideIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-slideIn { animation: slideIn 1s ease-out; }
+
+    @keyframes fadeInUp { 
+        0% { opacity: 0; transform: translateY(20px); } 
+        100% { opacity: 1; transform: translateY(0); } 
+    }
+    .animate-fadeInUp { animation: fadeInUp 0.6s ease-out; }
+
+    @keyframes glowEffect { 
+        0% { box-shadow: 0 0 8px rgba(34, 197, 94, 0.5); }
+        50% { box-shadow: 0 0 18px rgba(34, 197, 94, 0.9); }
+        100% { box-shadow: 0 0 8px rgba(34, 197, 94, 0.5); }
+    }
+    .animate-glowEffect { animation: glowEffect 2s ease-in-out infinite; }
+
+    .badge:hover {
+        animation: pulseEffect 1.5s infinite;
+    }
+    @keyframes pulseEffect {
+        0% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.06); opacity: 0.95; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+</style>
+
+{% endblock %}

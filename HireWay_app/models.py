@@ -92,7 +92,7 @@ class Test(models.Model):
     ]
 
     title = models.CharField(max_length=200)
-    duration = models.CharField(max_length=50)  # e.g. "30 mins"
+    duration = models.CharField(max_length=50)  # e.g., "30 mins"
     questions = models.PositiveIntegerField(default=0)
     topics = models.TextField()
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default="practice")
@@ -120,19 +120,19 @@ class Resume(models.Model):
     title = models.CharField(max_length=150, default="My Resume")
     template = models.CharField(max_length=50, choices=TEMPLATE_CHOICES, default='template1')
 
-    # Personal
+    # Personal Information
     full_name = models.CharField(max_length=200)
     email = models.EmailField()
     phone = models.CharField(max_length=40, blank=True)
     address = models.TextField(blank=True)
 
-    # Academic
+    # Academic Information
     college = models.CharField(max_length=250, blank=True)
     course = models.CharField(max_length=150, blank=True)
     passing_year = models.CharField(max_length=10, blank=True)
     cgpa = models.CharField(max_length=10, blank=True)
 
-    # Sections
+    # Resume Sections
     objective = models.TextField(blank=True)
     skills = models.TextField(blank=True, help_text="Comma-separated skills")
     projects = models.TextField(blank=True, help_text="One project per line: Title - Description")
@@ -154,7 +154,7 @@ class Resume(models.Model):
 # 🔹 Job
 # -------------------------------------------------------------------
 class Job(models.Model):
-    title = models.CharField(max_length=255)  # Ensure the title field exists
+    title = models.CharField(max_length=255)
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     description = models.TextField()
     location = models.CharField(max_length=255)
@@ -163,10 +163,12 @@ class Job(models.Model):
     package = models.CharField(max_length=50, blank=True)
     deadline = models.DateField()
 
+    class Meta:
+        verbose_name = "Job"
+        verbose_name_plural = "Jobs"
+
     def __str__(self):
-        return f"{self.title} at {self.company.name}"  # Returning title here
-
-
+        return f"{self.title} at {self.company.name}"
 
 
 # -------------------------------------------------------------------
@@ -202,4 +204,117 @@ class JobApplication(models.Model):
 
     def __str__(self):
         return f"{self.full_name} - {self.job.title}"
+
+
+# -------------------------------------------------------------------
+# 🔹 Placement History
+# -------------------------------------------------------------------
+class PlacementHistory(models.Model):
+    STATUS_CHOICES = [
+        ('Applied', 'Applied'),
+        ('Test Scheduled', 'Test Scheduled'),
+        ('Test Completed', 'Test Completed'),
+        ('Interview Scheduled', 'Interview Scheduled'),
+        ('Offer Received', 'Offer Received'),
+    ]
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    company_name = models.CharField(max_length=255)
+    application_date = models.DateField()
+    test_score = models.DecimalField(max_digits=5, decimal_places=2)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Applied')
+    test_status = models.CharField(max_length=50, blank=True)
+    interview_status = models.CharField(max_length=50, blank=True)
+
+    def __str__(self):
+        return f"{self.company_name} - {self.status}"
+
+
+
+from django.db import models
+from django.contrib.auth.models import User
+
+class Test(models.Model):
+    CATEGORY_CHOICES = [
+        ("practice", "Practice / Mock Test"),
+        ("company", "Company Test"),
+    ]
+    title = models.CharField(max_length=255)
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
+    company = models.ForeignKey("Company", on_delete=models.CASCADE, null=True, blank=True)  # only for company test
+    duration = models.IntegerField(default=30)  # in minutes
+    difficulty = models.CharField(max_length=20, choices=[("beginner", "Beginner"), ("intermediate", "Intermediate"), ("advanced", "Advanced")])
+    topics = models.CharField(max_length=255, blank=True)
+    total_questions = models.IntegerField(default=10)
+
+    def __str__(self):
+        return self.title
+
+
+class Question(models.Model):
+    test = models.ForeignKey(Test, on_delete=models.CASCADE, related_name="questions")
+    text = models.TextField()
+    option_a = models.CharField(max_length=255)
+    option_b = models.CharField(max_length=255)
+    option_c = models.CharField(max_length=255)
+    option_d = models.CharField(max_length=255)
+    correct_answer = models.CharField(max_length=1, choices=[("A", "A"), ("B", "B"), ("C", "C"), ("D", "D")])
+
+    def __str__(self):
+        return f"{self.test.title} - {self.text[:50]}"
+
+
+class TestResult(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    test = models.ForeignKey(Test, on_delete=models.CASCADE)
+    score = models.FloatField()
+    correct = models.IntegerField()
+    wrong = models.IntegerField()
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.test.title} ({self.score})"
+class TestResult(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    score = models.IntegerField()
+    test_name = models.CharField(max_length=200)
+    date_taken = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.test_name} - {self.score}"
+
+# models.py
+from django.db import models
+
+
+class PracticeTest(models.Model):
+    title = models.CharField(max_length=200)  # Title of the test
+    duration = models.IntegerField(help_text="Duration in minutes")  # Duration of the test
+    questions = models.IntegerField(help_text="Number of questions in the test")  # Number of questions
+    topics = models.CharField(max_length=500)  # Topics covered in the test
+    difficulty = models.CharField(
+        max_length=20,
+        choices=[('beginner', 'Beginner'), ('intermediate', 'Intermediate'), ('advanced', 'Advanced')]
+    )  # Difficulty level of the test
+
+    def __str__(self):
+        return self.title
+
+# models.py
+# models.py
+class CompanyTest(models.Model):
+    title = models.CharField(max_length=200)
+    duration = models.IntegerField(help_text="Duration in minutes")
+    questions = models.IntegerField(help_text="Number of questions in the test")
+    topics = models.CharField(max_length=500)
+    difficulty = models.CharField(
+        max_length=20,
+        choices=[('beginner', 'Beginner'), ('intermediate', 'Intermediate'), ('advanced', 'Advanced')]
+    )
+    company_name = models.CharField(max_length=200)  # Company name
+    skills_required = models.TextField(help_text="Skills required for the test")
+
+    def __str__(self):
+        return self.title
+
 

@@ -1,75 +1,29 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
+    <title>{{ resume.full_name }} - Resume</title>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            color: #333;
-            padding: 20px;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 10px;
-        }
-        .name {
-            font-size: 24px;
-            font-weight: 700;
-        }
-        .title {
-            font-size: 14px;
-            color: #666;
-        }
-        .section {
-            margin-top: 15px;
-        }
-        .section h4 {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-        .content {
-            font-size: 12px;
-            line-height: 1.5;
-        }
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { border-bottom: 2px solid black; }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="name">{{ resume.full_name }}</div>
-        <div class="title">{{ resume.title }} | {{ resume.email }} {% if resume.phone %}| {{ resume.phone }}{% endif %}</div>
-    </div>
-
-    <div class="section">
-        <h4>Objective</h4>
-        <div class="content">{{ resume.objective }}</div>
-    </div>
-
-    <div class="section">
-        <h4>Education</h4>
-        <div class="content">
-            {{ resume.college }} - {{ resume.course }}<br>
-            Passing Year: {{ resume.passing_year }} • CGPA: {{ resume.cgpa }}
-        </div>
-    </div>
-
-    <div class="section">
-        <h4>Skills</h4>
-        <div class="content">{{ resume.skills }}</div>
-    </div>
-
-    <div class="section">
-        <h4>Projects</h4>
-        <div class="content">{{ resume.projects }}</div>
-    </div>
-
-    <div class="section">
-        <h4>Certifications</h4>
-        <div class="content">{{ resume.certifications }}</div>
-    </div>
+    <h1>{{ resume.full_name }}</h1>
+    <p><b>Email:</b> {{ resume.email }} | <b>Phone:</b> {{ resume.phone }}</p>
+    <h2>Objective</h2>
+    <p>{{ resume.objective }}</p>
+    <h2>Education</h2>
+    <p>{{ resume.course }} - {{ resume.college }} ({{ resume.passing_year }})</p>
+    <p><b>CGPA:</b> {{ resume.cgpa }}</p>
+    <h2>Skills</h2>
+    <ul>
+        {% for skill in resume.skills.split(",") %}
+        <li>{{ skill }}</li>
+        {% endfor %}
+    </ul>
+    <h2>Projects</h2>
+    <p>{{ resume.projects|linebreaks }}</p>
+    <h2>Certifications</h2>
+    <p>{{ resume.certifications|linebreaks }}</p>
 </body>
 </html>

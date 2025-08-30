@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Student, Notification, Job, JobApplication, Company, Resume
+from .models import Student, Notification, Job, JobApplication, Company, Resume, PracticeTest, CompanyTest
 
 # Student Model Admin
 @admin.register(Student)
@@ -29,6 +29,10 @@ class CompanyAdmin(admin.ModelAdmin):
 # Resume Model Admin
 @admin.register(Resume)
 class ResumeAdmin(admin.ModelAdmin):
-    list_display = ('title','full_name','user','template','updated_at')
-    list_filter = ('template','updated_at')
-    search_fields = ('full_name','email','user__username')
+    list_display = ('title', 'full_name', 'user', 'template', 'updated_at')
+    list_filter = ('template', 'updated_at')
+    search_fields = ('full_name', 'email', 'user__username')
+
+
+admin.site.register(PracticeTest)
+admin.site.register(CompanyTest)
