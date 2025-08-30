@@ -1,0 +1,220 @@
+<!-- jobs/templates/jobs/job_applications.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Placement Tracker Portal - Job Applications</title>
+    <!-- Tailwind CSS for a unique, modern, and professional design -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Custom styles for impressiveness -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb;
+        }
+        .navbar {
+            background-color: #1e40af;
+        }
+        .search-section {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .job-card {
+            background-color: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            transition: all 0.3s ease;
+        }
+        .job-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .apply-btn {
+            background-color: #10b981;
+            color: white;
+        }
+        .details-btn {
+            background-color: #6b7280;
+            color: white;
+        }
+        .status-shortlisted {
+            color: #eab308;
+            font-weight: 600;
+        }
+        .status-interview {
+            color: #06b6d4;
+            font-weight: 600;
+        }
+        .status-offer {
+            color: #10b981;
+            font-weight: 600;
+        }
+        .footer {
+            background-color: #1e40af;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+        /* Add subtle animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar text-white p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="#" class="text-xl font-bold">Placement Tracker Portal</a>
+            <div class="space-x-4">
+                <a href="#" class="hover:underline">Dashboard</a>
+                <a href="#" class="hover:underline font-semibold">Jobs</a>
+                <a href="#" class="hover:underline">Practice & Exam</a>
+                <a href="#" class="hover:underline">Resume Builder</a>
+                <a href="#" class="hover:underline">Leader-board</a>
+                <a href="#" class="hover:underline">History</a>
+                <a href="#" class="hover:underline">Profile</a>
+            </div>
+            <div>{{ request.user.username }}</div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mx-auto mt-8 px-4">
+        <h1 class="text-3xl font-bold text-center mb-6 animate-fadeIn">Job Applications</h1>
+
+        <!-- Search Filters -->
+        <div class="search-section mb-8 animate-fadeIn">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label for="domainSelect" class="block text-sm font-medium text-gray-700">Search by Domain</label>
+                    <select id="domainSelect" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                        <option value="">All</option>
+                        {% for domain in domains %}
+                            <option value="{{ domain }}">{{ domain }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label for="packageSelect" class="block text-sm font-medium text-gray-700">Search by Package</label>
+                    <select id="packageSelect" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                        <option value="">All</option>
+                        {% for pkg in packages %}
+                            <option value="{{ pkg }}">{{ pkg }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label for="locationSelect" class="block text-sm font-medium text-gray-700">Search by Location</label>
+                    <select id="locationSelect" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                        <option value="">All</option>
+                        {% for loc in locations %}
+                            <option value="{{ loc }}">{{ loc }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="md:col-span-4">
+                    <label for="searchInput" class="block text-sm font-medium text-gray-700">Search Jobs</label>
+                    <input type="text" id="searchInput" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" placeholder="Search jobs...">
+                </div>
+            </div>
+        </div>
+
+        <!-- Job Listings -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8" id="jobListings">
+            {% for job in jobs %}
+                <div class="job-item job-card animate-fadeIn" data-domain="{{ job.domain|lower }}" data-package="{{ job.package|lower }}" data-location="{{ job.location|lower }}">
+                    <h5 class="text-lg font-semibold">{{ job.title }} - {{ job.company }}</h5>
+                    <p class="text-gray-600">{{ job.location }} | {{ job.package }}</p>
+                    <p class="text-gray-600">Eligibility: {{ job.eligibility }}</p>
+                    <button class="apply-btn px-4 py-2 rounded-md text-sm" onclick="applyJob('{{ job.company }}')">Apply</button>
+                    <button class="details-btn px-4 py-2 rounded-md text-sm ml-2" onclick="viewDetails('{{ job.company }}')">View Details</button>
+                </div>
+            {% empty %}
+                <p class="text-center col-span-3">No jobs available.</p>
+            {% endfor %}
+        </div>
+
+        <!-- My Applications Section -->
+        <h2 class="text-2xl font-bold mb-4 animate-fadeIn">My Applications</h2>
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+                <thead class="bg-indigo-600 text-white">
+                    <tr>
+                        <th class="px-6 py-3 text-left">Company</th>
+                        <th class="px-6 py-3 text-left">Role</th>
+                        <th class="px-6 py-3 text-left">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for app in applications %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4">{{ app.job.company }}</td>
+                            <td class="px-6 py-4">{{ app.job.title }}</td>
+                            <td class="px-6 py-4 {% if app.status == 'shortlisted' %}status-shortlisted{% elif app.status == 'interview_scheduled' %}status-interview{% elif app.status == 'offer_received' %}status-offer{% endif %}">{{ app.get_status_display }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="3" class="px-6 py-4 text-center">No applications yet.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        Placement Tracker Portal
+    </div>
+
+    <!-- Custom JS for Interactivity -->
+    <script>
+        function filterJobs() {
+            const domain = document.getElementById('domainSelect').value.toLowerCase();
+            const packageRange = document.getElementById('packageSelect').value.toLowerCase();
+            const location = document.getElementById('locationSelect').value.toLowerCase();
+            const search = document.getElementById('searchInput').value.toLowerCase();
+
+            const jobs = document.querySelectorAll('.job-item');
+            jobs.forEach(job => {
+                const jobDomain = job.dataset.domain;
+                const jobPackage = job.dataset.package;
+                const jobLocation = job.dataset.location;
+                const jobText = job.innerText.toLowerCase();
+
+                const matchesDomain = !domain || jobDomain.includes(domain);
+                const matchesPackage = !packageRange || jobPackage.includes(packageRange);
+                const matchesLocation = !location || jobLocation.includes(location);
+                const matchesSearch = !search || jobText.includes(search);
+
+                job.style.display = (matchesDomain && matchesPackage && matchesLocation && matchesSearch) ? 'block' : 'none';
+            });
+        }
+
+        document.getElementById('domainSelect').addEventListener('change', filterJobs);
+        document.getElementById('packageSelect').addEventListener('change', filterJobs);
+        document.getElementById('locationSelect').addEventListener('change', filterJobs);
+        document.getElementById('searchInput').addEventListener('input', filterJobs);
+
+        function applyJob(company) {
+            alert(`Applied to ${company}!`);
+            // AJAX call to server for real application
+        }
+
+        function viewDetails(company) {
+            alert(`Viewing details for ${company}.`);
+            // Could redirect or open modal
+        }
+    </script>
+</body>
+</html>
