@@ -1,4 +1,6 @@
+{% load static %}
 <!-- HireWay_app/templates/welcome.html -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -170,8 +172,8 @@
                 HireWay <span class="ml-2 text-sm text-gray-400 animate-pulse">v1.0</span>
             </a>
             <div class="space-x-8">
-                <a href="{% url '' %}" class="hover:underline transition-transform">Login</a>
-                <a href="" class="hover:underline transition-transform">Sign Up</a>
+                <a href="{% url 'accounts:login' %}" class="hover:underline transition-transform">Login</a>
+                <a href="{% url 'accounts:register' %}" class="hover:underline transition-transform">Sign Up</a>
             </div>
         </div>
     </nav>

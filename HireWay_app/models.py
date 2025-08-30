@@ -27,7 +27,6 @@ class Notification(models.Model):
         return f"{self.student.user.username} - {self.message[:30]}"
 
 
-# 🔹 Jobs
 class Job(models.Model):
     title = models.CharField(max_length=100)
     company = models.CharField(max_length=100)
@@ -40,7 +39,7 @@ class Job(models.Model):
         return f"{self.title} - {self.company}"
 
 
-# 🔹 Job Applications
+
 class Application(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="applications")
     job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name="applications")
@@ -55,7 +54,7 @@ class Application(models.Model):
         return f"{self.user.username} - {self.job.title} ({self.status})"
 
 
-# 🔹 Company
+
 class Company(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="company_profile")
     name = models.CharField(max_length=150)

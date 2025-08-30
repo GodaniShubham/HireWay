@@ -9,55 +9,99 @@
 
 <!-- Tabs -->
 <div class="flex mb-6">
-  <button class="w-1/2 py-3 bg-gradient-to-r from-yellow-600 to-yellow-400 text-white font-medium rounded-l-lg hover:scale-105 transition">Practice & Mockup Exam</button>
-  <button class="w-1/2 py-3 bg-gradient-to-r from-green-600 to-green-400 text-white font-medium rounded-r-lg hover:scale-105 transition">Company's Test</button>
+  <button onclick="showTab('practice')" id="tab-practice"
+    class="w-1/2 py-3 bg-gradient-to-r from-yellow-600 to-yellow-400 text-white font-medium rounded-l-lg hover:scale-105 transition">
+    Practice & Mockup Exam
+  </button>
+  <button onclick="showTab('company')" id="tab-company"
+    class="w-1/2 py-3 bg-gradient-to-r from-green-600 to-green-400 text-white font-medium rounded-r-lg hover:scale-105 transition">
+    Company's Test
+  </button>
 </div>
 
-<!-- Tests Table -->
-<div class="glass glow rounded-2xl overflow-hidden animate-fadeInUp">
-  <table class="w-full text-left border-collapse">
-    <thead class="bg-gray-800/70 text-gray-300">
-      <tr>
-        <th class="p-4">Company</th>
-        <th class="p-4">Job Role</th>
-        <th class="p-4">Date & Time</th>
-        <th class="p-4">Duration</th>
-        <th class="p-4">Status</th>
-        <th class="p-4 text-center">Action</th>
-      </tr>
-    </thead>
-    <tbody class="divide-y divide-gray-700">
-      {% for test in tests %}
-      <tr class="hover:bg-gray-700/40 transition">
-        <td class="p-4 font-medium text-blue-400">{{ test.company }}</td>
-        <td class="p-4 text-orange-400">{{ test.role }}</td>
-        <td class="p-4 text-gray-300">{{ test.date }}</td>
-        <td class="p-4 text-green-400">{{ test.duration }} mins</td>
-        <td class="p-4">
-          {% if test.status == "Scheduled" %}
-            <span class="px-3 py-1 text-xs rounded-full bg-green-500/20 text-green-300 animate-pulse">Scheduled</span>
-          {% elif test.status == "Pending" %}
-            <span class="px-3 py-1 text-xs rounded-full bg-yellow-500/20 text-yellow-300 animate-pulse">Pending</span>
-          {% else %}
-            <span class="px-3 py-1 text-xs rounded-full bg-red-500/20 text-red-300">Completed</span>
-          {% endif %}
-        </td>
-        <td class="p-4 text-center">
-          <button class="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg shadow hover:scale-105 transition">
-            Start Test
-          </button>
-        </td>
-      </tr>
-      {% empty %}
-      <tr>
-        <td colspan="6" class="p-6 text-center text-gray-400">No tests assigned yet 🚀</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+<!-- Practice Tests Table -->
+<div id="practice" class="tab-content hidden">
+  <div class="glass glow rounded-2xl overflow-hidden animate-fadeInUp">
+    <table class="w-full text-left border-collapse">
+      <thead class="bg-gray-800/70 text-gray-300">
+        <tr>
+          <th class="p-4">Exam Name</th>
+          <th class="p-4">Duration</th>
+          <th class="p-4 text-center">Action</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-700">
+        {% for test in practice_tests %}
+        <tr class="hover:bg-gray-700/40 transition">
+          <td class="p-4 font-medium text-blue-400">{{ test.name }}</td>
+          <td class="p-4 text-green-400">{{ test.duration }} mins</td>
+          <td class="p-4 text-center">
+            <a href="{% url 'start_test' test.id %}" 
+               class="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg shadow hover:scale-105 transition">
+              Start Test
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="3" class="p-6 text-center text-gray-400">No practice tests yet 📝</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
 
-<p class="text-sm text-gray-400 mt-6">⚠️ Note: Tests will only be available during the scheduled window. Status updates automatically after completion.</p>
+<!-- Company Tests Table -->
+<div id="company" class="tab-content">
+  <div class="glass glow rounded-2xl overflow-hidden animate-fadeInUp">
+    <table class="w-full text-left border-collapse">
+      <thead class="bg-gray-800/70 text-gray-300">
+        <tr>
+          <th class="p-4">Company</th>
+          <th class="p-4">Job Role</th>
+          <th class="p-4">Date & Time</th>
+          <th class="p-4">Duration</th>
+          <th class="p-4">Status</th>
+          <th class="p-4 text-center">Action</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-700">
+        {% for test in tests %}
+        <tr class="hover:bg-gray-700/40 transition">
+          <td class="p-4 font-medium text-blue-400">{{ test.company }}</td>
+          <td class="p-4 text-orange-400">{{ test.role }}</td>
+          <td class="p-4 text-gray-300">{{ test.date|date:"d M Y, H:i A" }}</td>
+          <td class="p-4 text-green-400">{{ test.duration }} mins</td>
+          <td class="p-4">
+            {% if test.status == "Scheduled" %}
+              <span class="px-3 py-1 text-xs rounded-full bg-green-500/20 text-green-300 animate-pulse">Scheduled</span>
+            {% elif test.status == "Pending" %}
+              <span class="px-3 py-1 text-xs rounded-full bg-yellow-500/20 text-yellow-300 animate-pulse">Pending</span>
+            {% else %}
+              <span class="px-3 py-1 text-xs rounded-full bg-red-500/20 text-red-300">Completed</span>
+            {% endif %}
+          </td>
+          <td class="p-4 text-center">
+            <a href="{% url 'start_test' test.id %}" 
+               class="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg shadow hover:scale-105 transition">
+              Start Test
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" class="p-6 text-center text-gray-400">No company tests yet 🚀</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<p class="text-sm text-gray-400 mt-6">
+  ⚠️ Note: Tests will only be available during the scheduled window. Status updates automatically after completion.
+</p>
 
 <style>
   @keyframes fadeInUp {
@@ -65,7 +109,16 @@
     to { opacity: 1; transform: translateY(0); }
   }
   .animate-fadeInUp { animation: fadeInUp 0.8s ease-out; }
+  .hidden { display: none; }
 </style>
 
 <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<script>
+  function showTab(tab) {
+    document.querySelectorAll(".tab-content").forEach(el => el.classList.add("hidden"));
+    document.getElementById(tab).classList.remove("hidden");
+  }
+  // Default open "company"
+  showTab('company');
+</script>
 {% endblock %}

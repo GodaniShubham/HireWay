@@ -1,32 +1,95 @@
 {% extends "base.html" %}
 
-{% block title %}{{ title }} | Placement Tracker{% endblock %}
+{% block title %}Exam - Placement Tracker{% endblock %}
 
 {% block content %}
-<div class="glass glow rounded-2xl p-8 max-w-3xl mx-auto animate-fadeInUp">
-  <h2 class="text-3xl font-bold text-indigo-400 mb-4">{{ title }}</h2>
-  <p class="text-gray-300 mb-6">⏱️ Time Limit: <span class="text-red-400 font-semibold">{{ time_limit }} mins</span></p>
+<h2 class="text-3xl font-semibold text-orange-400 mb-6 flex items-center gap-2">
+  <i class="fas fa-clock text-red-400"></i> Aptitude Test
+</h2>
 
-  <form method="post">
-    {% csrf_token %}
-    {% for q in questions %}
-    <div class="mb-6">
-      <p class="font-medium text-lg text-yellow-300 mb-2">{{ forloop.counter }}. {{ q.question }}</p>
-      <div class="space-y-2">
-        {% for opt in q.options %}
-        <label class="block bg-gray-800/50 px-4 py-2 rounded-lg hover:bg-gray-700 cursor-pointer">
-          <input type="radio" name="q{{ q.id }}" value="{{ opt }}" class="mr-2">
-          <span class="text-gray-200">{{ opt }}</span>
-        </label>
-        {% endfor %}
-      </div>
-    </div>
-    {% endfor %}
-    <button type="submit" class="w-full py-3 bg-gradient-to-r from-green-500 to-green-700 text-white font-semibold rounded-lg hover:scale-105 transition">
-      Submit Test 🚀
-    </button>
-  </form>
+<!-- Timer & Info -->
+<div class="flex justify-between items-center bg-gray-800/60 p-4 rounded-lg mb-6">
+  <span class="text-red-400 text-lg">⏳ Time Left: <span id="timer">{{ time_limit }}:00</span></span>
+  <span class="text-yellow-400 text-lg">Total: {{ total_questions }} Questions</span>
+  <button onclick="finishExam()" class="px-4 py-2 bg-orange-500 text-white rounded-lg hover:scale-105 transition">Finish Exam</button>
 </div>
+
+<div class="grid grid-cols-3 gap-6">
+  <!-- Question Area -->
+  <div class="col-span-2 glass glow p-6 rounded-2xl animate-fadeInUp">
+    <h3 class="text-xl font-bold mb-4" id="question-text">Question 1</h3>
+    <ul id="options" class="space-y-3 text-gray-300">
+      <!-- Options load dynamically -->
+    </ul>
+    <button onclick="nextQuestion()" class="mt-6 px-4 py-2 bg-blue-500 rounded text-white hover:scale-105">Next Question</button>
+  </div>
+
+  <!-- Navigator -->
+  <div class="glass glow p-6 rounded-2xl animate-fadeInUp">
+    <h3 class="text-lg font-semibold mb-4">Question Navigator</h3>
+    <div class="grid grid-cols-5 gap-2">
+      {% for i in questions %}
+        <button id="nav-{{ i.id }}" onclick="goToQuestion({{ i.id }})"
+          class="w-10 h-10 rounded bg-gray-700 text-white hover:bg-blue-500">
+          {{ i.id }}
+        </button>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<script>
+  let questions = {{ questions|safe }};
+  let current = 0;
+
+  function loadQuestion(index) {
+    document.getElementById("question-text").innerText = "Question " + questions[index].id + ": " + questions[index].question;
+    let optionsHTML = "";
+    questions[index].options.forEach(opt => {
+      optionsHTML += `<li><label><input type="radio" name="q${questions[index].id}"> ${opt}</label></li>`;
+    });
+    document.getElementById("options").innerHTML = optionsHTML;
+  }
+
+  function nextQuestion() {
+    if (current < questions.length - 1) {
+      current++;
+      loadQuestion(current);
+    }
+  }
+
+  function goToQuestion(id) {
+    let index = questions.findIndex(q => q.id === id);
+    if (index !== -1) {
+      current = index;
+      loadQuestion(current);
+    }
+  }
+
+  function startTimer(duration, display) {
+    let timer = duration, minutes, seconds;
+    setInterval(() => {
+      minutes = parseInt(timer / 60, 10);
+      seconds = parseInt(timer % 60, 10);
+      display.textContent = minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+      if (--timer < 0) {
+        alert("⏳ Time's up! Submitting exam.");
+        finishExam();
+      }
+    }, 1000);
+  }
+
+  function finishExam() {
+    alert("✅ Exam Finished! Submitting your answers...");
+    window.location.href = "/";
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    loadQuestion(0);
+    let display = document.querySelector('#timer');
+    startTimer({{ time_limit }} * 60, display);
+  });
+</script>
 
 <style>
   @keyframes fadeInUp {
