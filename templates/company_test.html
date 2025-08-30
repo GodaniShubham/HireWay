@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Company Tests | Placement Tracker{% endblock %}
+
+{% block content %}
+<h2 class="text-4xl font-semibold mb-10 text-orange-400 animate-pulse flex items-center gap-2">
+  <i class="fas fa-tasks text-white"></i> Company Tests
+</h2>
+
+<!-- Tabs -->
+<div class="flex mb-6">
+  <button class="w-1/2 py-3 bg-gradient-to-r from-yellow-600 to-yellow-400 text-white font-medium rounded-l-lg hover:scale-105 transition">Practice & Mockup Exam</button>
+  <button class="w-1/2 py-3 bg-gradient-to-r from-green-600 to-green-400 text-white font-medium rounded-r-lg hover:scale-105 transition">Company's Test</button>
+</div>
+
+<!-- Tests Table -->
+<div class="glass glow rounded-2xl overflow-hidden animate-fadeInUp">
+  <table class="w-full text-left border-collapse">
+    <thead class="bg-gray-800/70 text-gray-300">
+      <tr>
+        <th class="p-4">Company</th>
+        <th class="p-4">Job Role</th>
+        <th class="p-4">Date & Time</th>
+        <th class="p-4">Duration</th>
+        <th class="p-4">Status</th>
+        <th class="p-4 text-center">Action</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-700">
+      {% for test in tests %}
+      <tr class="hover:bg-gray-700/40 transition">
+        <td class="p-4 font-medium text-blue-400">{{ test.company }}</td>
+        <td class="p-4 text-orange-400">{{ test.role }}</td>
+        <td class="p-4 text-gray-300">{{ test.date }}</td>
+        <td class="p-4 text-green-400">{{ test.duration }} mins</td>
+        <td class="p-4">
+          {% if test.status == "Scheduled" %}
+            <span class="px-3 py-1 text-xs rounded-full bg-green-500/20 text-green-300 animate-pulse">Scheduled</span>
+          {% elif test.status == "Pending" %}
+            <span class="px-3 py-1 text-xs rounded-full bg-yellow-500/20 text-yellow-300 animate-pulse">Pending</span>
+          {% else %}
+            <span class="px-3 py-1 text-xs rounded-full bg-red-500/20 text-red-300">Completed</span>
+          {% endif %}
+        </td>
+        <td class="p-4 text-center">
+          <button class="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg shadow hover:scale-105 transition">
+            Start Test
+          </button>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="6" class="p-6 text-center text-gray-400">No tests assigned yet 🚀</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<p class="text-sm text-gray-400 mt-6">⚠️ Note: Tests will only be available during the scheduled window. Status updates automatically after completion.</p>
+
+<style>
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fadeInUp { animation: fadeInUp 0.8s ease-out; }
+</style>
+
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+{% endblock %}

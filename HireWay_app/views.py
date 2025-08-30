@@ -1,7 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
-from .models import Job, Application
-
+from django.shortcuts import render
 
 def student_dashboard(request):
     context = {
@@ -15,13 +12,13 @@ def student_dashboard(request):
     }
     return render(request, 'student_dashboard.html', context)
 
+
 def company_dashboard(request):
-    # Dummy data (you can replace with DB queries later)
     stats = {
         "jobs_posted": 12,
         "applicants": 85,
         "interviews": 14,
-        "success_rate": 72,   # percentage
+        "success_rate": 72,
     }
 
     latest_applicants = [
@@ -30,19 +27,51 @@ def company_dashboard(request):
         {"name": "Sarah Lee", "status": "Pending"},
     ]
 
-    return render(request, "company_dashboard.html", {
+    return render(request, "company.html", {
         "stats": stats,
         "latest_applicants": latest_applicants
     })
 
+def tpo_dashboard(request):
+    stats = {
+        "total_companies": 25,
+        "students_registered": 320,
+        "placements_done": 145,
+        "ongoing_drives": 6,
+    }
+
+    latest_drives = [
+        {"company": "Google", "role": "SDE", "date": "2025-09-02"},
+        {"company": "Amazon", "role": "Data Analyst", "date": "2025-09-05"},
+        {"company": "Infosys", "role": "System Engineer", "date": "2025-09-08"},
+    ]
+
+    return render(request, "tpo.html", {
+        "stats": stats,
+        "latest_drives": latest_drives,
+    })
+
+
+
 
 def job_applications(request):
-    jobs = Job.objects.all()
-    # Show applications only for authenticated users, empty list for guests
-    applications = Application.objects.filter(user=request.user) if request.user.is_authenticated else []
-    
+    # Dummy data for now
+    jobs = [
+        {"title": "Software Engineer", "company": "Google"},
+        {"title": "Data Analyst", "company": "Amazon"},
+    ]
+    applications = []
+
     context = {
         'jobs': jobs,
         'applications': applications,
     }
     return render(request, 'job_applications.html', context)
+
+def company_tests(request):
+    tests = [
+        {"company": "TechCorp", "role": "Software Engineer", "date": "Oct 5, 10:00 AM", "duration": 60, "status": "Scheduled"},
+        {"company": "FinTechX", "role": "Data Analyst", "date": "Sept 28, 2:00 PM", "duration": 45, "status": "Pending"},
+        {"company": "Innovatech", "role": "UI/UX Designer", "date": "Oct 10, 11:00 AM", "duration": 30, "status": "Completed"},
+    ]
+    return render(request, "company_tests.html", {"tests": tests})

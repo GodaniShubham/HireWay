@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | TPO - Placement Tracker{% endblock %}
+
+{% block content %}
+<h2 class="text-4xl font-semibold mb-10 animate-pulse">Welcome, TPO...</h2>
+
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+  
+  <!-- Total Companies -->
+  <div class="glass glow rounded-2xl p-6 text-center transition duration-500 hover:scale-105 hover:-rotate-1">
+    <i class="fas fa-building text-white text-5xl mb-3 animate-bounce"></i>
+    <p class="text-5xl font-extrabold text-blue-400 counter" data-target="{{ stats.total_companies }}">0</p>
+    <p class="text-gray-300 text-sm mt-2">Companies Partnered</p>
+  </div>
+
+  <!-- Students Registered -->
+  <div class="glass glow rounded-2xl p-6 text-center transition duration-500 hover:scale-105 hover:rotate-1 delay-200">
+    <i class="fas fa-user-graduate text-white text-5xl mb-3 animate-spin-slow"></i>
+    <p class="text-5xl font-extrabold text-green-400 counter" data-target="{{ stats.students_registered }}">0</p>
+    <p class="text-gray-300 text-sm mt-2">Students Registered</p>
+  </div>
+
+  <!-- Placements Done -->
+  <div class="glass glow rounded-2xl p-6 text-center transition duration-500 hover:scale-105 hover:-rotate-1 delay-400">
+    <i class="fas fa-briefcase text-white text-5xl mb-3 animate-pulse"></i>
+    <p class="text-5xl font-extrabold text-yellow-400 counter" data-target="{{ stats.placements_done }}">0</p>
+    <p class="text-gray-300 text-sm mt-2">Placements Completed</p>
+  </div>
+
+  <!-- Ongoing Drives -->
+  <div class="glass glow rounded-2xl p-6 text-center transition duration-500 hover:scale-105 hover:rotate-1 delay-600">
+    <i class="fas fa-calendar-alt text-white text-5xl mb-3 animate-bounce"></i>
+    <p class="text-5xl font-extrabold text-indigo-400 counter" data-target="{{ stats.ongoing_drives }}">0</p>
+    <p class="text-gray-300 text-sm mt-2">Ongoing Drives</p>
+  </div>
+</div>
+
+<!-- Latest Drives Section -->
+<div class="glass glow rounded-2xl p-8 mt-10 animate-fadeInUp">
+  <h3 class="text-xl font-medium mb-4">📌 Latest Placement Drives</h3>
+  <ul class="space-y-3 text-gray-300 text-sm">
+    {% for drive in latest_drives %}
+    <li class="flex items-center justify-between">
+      <span>{{ drive.company }} – {{ drive.role }}</span>
+      <span class="bg-indigo-500/20 text-indigo-300 text-xs px-2 py-1 rounded">{{ drive.date }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+
+<!-- Counter Animation Script -->
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const counters = document.querySelectorAll(".counter");
+    counters.forEach(counter => {
+      counter.innerText = "0";
+      const updateCounter = () => {
+        const target = +counter.getAttribute("data-target");
+        const current = +counter.innerText;
+        const increment = Math.ceil(target / 50);
+        if (current < target) {
+          counter.innerText = current + increment;
+          setTimeout(updateCounter, 30);
+        } else {
+          counter.innerText = target;
+        }
+      };
+      updateCounter();
+    });
+  });
+</script>
+
+<style>
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fadeInUp { animation: fadeInUp 1s ease-out; }
+  .delay-200 { animation-delay: 0.2s; }
+  .delay-400 { animation-delay: 0.4s; }
+  .delay-600 { animation-delay: 0.6s; }
+
+  @keyframes spinSlow { 100% { transform: rotate(360deg); } }
+  .animate-spin-slow { animation: spinSlow 6s linear infinite; }
+</style>
+
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+{% endblock %}

@@ -11,8 +11,8 @@ from django.conf import settings
 from django.urls import reverse
 
 User = get_user_model()
+from .models import UserProfile
 
-# ------------------ REGISTER ------------------
 def register_view(request):
     if request.method == "POST":
         first_name = request.POST.get("first_name")
@@ -21,6 +21,10 @@ def register_view(request):
         username = request.POST.get("username")
         password = request.POST.get("password")
         confirm_password = request.POST.get("confirm_password")
+        role = request.POST.get("role")
+        roll_number = request.POST.get("roll_number")
+        branch = request.POST.get("branch")
+        graduation_year = request.POST.get("graduation_year")
 
         if password != confirm_password:
             messages.error(request, "Passwords do not match.")
@@ -34,6 +38,7 @@ def register_view(request):
             messages.error(request, "Email already registered.")
             return redirect("accounts:register")
 
+        # Create user in Django's default User table
         user = User.objects.create_user(
             username=username,
             email=email,
@@ -41,29 +46,52 @@ def register_view(request):
             first_name=first_name,
             last_name=last_name
         )
-        user.save()
+
+        # Create profile in our custom table
+        UserProfile.objects.create(
+            user=user,
+            role=role,
+            roll_number=roll_number,
+            branch=branch,
+            graduation_year=graduation_year
+        )
+
         messages.success(request, "Account created successfully! Please log in.")
         return redirect("accounts:login")
 
     return render(request, "accounts/register.html")
 
-
 # ------------------ LOGIN ------------------
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import UserAccount
+
 def login_view(request):
     if request.method == "POST":
-        username = request.POST.get("username")
+        role = request.POST.get("role")
+        email = request.POST.get("email")
         password = request.POST.get("password")
-        user = authenticate(request, username=username, password=password)
 
-        if user is not None:
-            login(request, user)
-            messages.success(request, f"Welcome back, {user.username}!")
-            return redirect("accounts:dashboard")
-        else:
-            messages.error(request, "Invalid username or password.")
+        try:
+            user = UserAccount.objects.get(email=email, role=role)
+            if user.check_password(password):
+                # store session
+                request.session["user_id"] = user.id
+                request.session["role"] = user.role
+
+                # redirect based on role
+                if user.role == "student":
+                    return redirect("student_dashboard")
+                elif user.role == "company":
+                    return redirect("company_dashboard")
+                elif user.role == "tpo":
+                    return redirect("tpo_dashboard")
+            else:
+                messages.error(request, "Invalid password")
+        except UserAccount.DoesNotExist:
+            messages.error(request, "User not found for this role")
 
     return render(request, "accounts/login.html")
-
 
 # ------------------ LOGOUT ------------------
 def logout_view(request):
@@ -141,3 +169,13 @@ def reset_password_view(request, uidb64, token):
     else:
         messages.error(request, "Invalid or expired password reset link.")
         return redirect("accounts:forgot_password")
+
+
+def student_dashboard(request):
+    return render(request, "student_dashboard.html")
+
+def company_dashboard(request):
+    return render(request, "company_dashboard.html")
+
+def tpo_dashboard(request):
+    return render(request, "tpo_dashboard.html")
